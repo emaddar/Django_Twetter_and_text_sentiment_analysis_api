@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Home page</title>
+
+  <script src="https://kit.fontawesome.com/8f51521eb7.js" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <style>
+    .center {
+      position: absolute;
+      text-align: center;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: rgb(230, 239, 245);
+    }
+  </style>
+</head>
+
+
+
+<body class="center" >
+
+  <h1 style="color:rgb(44, 44, 90); font-weight: 700;">
+    <i class="fa-brands fa-twitter"></i> Twitter API sentiment analysis 
+  </h1>
+
+  <p style="color:rgb(51, 51, 83); font-weight: 700; text-align: justify;">
+    This application searches for the latest Tweets in a defined period. Then an AI model analyzes and summarizes the tweets to give the general sentiment on the subject or the person in question.
+  </p>
+
+  <form action="result">
+    {% csrf_token %}
+    <div class="row g-2">
+
+      <!-- all_words -->
+        <div class="col-md">
+          <div class="form-floating">
+            <input type="text" class="form-control" id="floatingInputGrid" placeholder="All of these words*, Ex: PSG club" name="all_words" required>
+            <!-- <label for="floatingInputGrid">Email address</label> -->
+          </div>
+        </div>
+
+
+            <!-- limit -->
+            <div class="col-md">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="floatingInputGrid" placeholder="Limit" name="limit" required>
+                <!-- <label for="floatingInputGrid">Email address</label> -->
+              </div>
+            </div>
+      </div>
+      <p></p>
+
+
+<!-- ************************************************************************** -->
+<!-- ************************************************************************** -->
+<!-- ************************************************************************** -->
+
+
+
+
+<div class="row g-2">
+
+  <!-- exact_phrase -->
+    <div class="col-md">
+      <div class="form-group">
+        <input type="text" class="form-control" id="floatingInputGrid" placeholder="This exact phrase" name="exact_phrase">
+        <!-- <label for="floatingInputGrid">Email address</label> -->
+      </div>
+    </div>
+
+  
+      <!-- Any_of_these_words -->
+      <div class="col-md">
+      <div class="form-group">
+        <input class="form-control" placeholder="Any of these words"  type="text" name="Any_of_these_words">
+      </div>
+      </div>
+
+
+    
+      <!-- None_of_these_words -->
+      <div class="col-md">
+        <div class="form-group">
+          <input class="form-control" placeholder="None of these words"  type="text" name="None_of_these_words">
+        </div>
+      </div>          
+</div>
+<p></p>
+
+
+
+
+
+
+
+
+
+<!-- *************************************************************** -->
+<!-- *************************************************************** -->
+<!-- *************************************************************** -->
+
+
+
+<div class="row g-2">
+
+      <!-- These_hastags -->
+        <div class="col-md">
+          <div class="form-floating">
+            <input type="text" class="form-control" id="floatingInputGrid" placeholder="These hastags, Ex: #leag1" name="These_hastags">
+            <!-- <label for="floatingInputGrid">Email address</label> -->
+          </div>
+        </div>
+
+      
+          <!-- From_acounts -->
+          <div class="col-md">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="floatingInputGrid" placeholder="From acounts, Ex: @KMbappe" name="From_acounts">
+              <!-- <label for="floatingInputGrid">Email address</label> -->
+            </div>
+          </div>
+
+
+        
+            <!-- To_acounts -->
+          <div class="col-md">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="floatingInputGrid" placeholder="To acounts" name="To_acounts">
+              <!-- <label for="floatingInputGrid">Email address</label> -->
+            </div>
+          </div>          
+    </div>
+<p></p>
+
+    
+
+
+<div class="row g-2">
+
+  <!-- Minimun_replies -->
+    <div class="col-md">
+      <div class="form-floating">
+        <input type="text" class="form-control" id="floatingInputGrid" placeholder="Minimun replies" name="Minimun_replies">
+        <!-- <label for="floatingInputGrid">Email address</label> -->
+      </div>
+    </div>
+
+  
+      <!-- Minimum_likes -->
+      <div class="col-md">
+        <div class="form-floating">
+          <input type="text" class="form-control" id="floatingInputGrid" placeholder="Minimum likes" name="Minimum_likes">
+          <!-- <label for="floatingInputGrid">Email address</label> -->
+        </div>
+      </div>
+
+
+    
+        <!-- Minimum_retweets -->
+      <div class="col-md">
+        <div class="form-floating">
+          <input type="text" class="form-control" id="floatingInputGrid" placeholder="Minimum retweets" name="Minimum_retweets">
+          <!-- <label for="floatingInputGrid">Email address</label> -->
+        </div>
+      </div>          
+</div>
+<p></p>
+    
+
+<div class="row g-2">
+
+  <!-- from_date -->
+    <div class="col-md">
+      <div class="form-floating">
+        <input type="date" id="start" 
+                min="2005-01-01" class="form-control" id="floatingInputGrid"  name="from_date">
+        <label for="floatingInputGrid">From</label>
+      </div>
+    </div>
+
+   <!-- to_date -->
+    <div class="col-md">
+      <div class="form-floating">
+        <input type="date" id="start" 
+                min="2005-01-01" class="form-control" id="floatingInputGrid"  name="to_date">
+        <label for="floatingInputGrid">To</label>
+      </div>
+    </div>
+
+
+    
+        <!-- lang -->
+      <div class="col-md">
+        <div class="form-floating">
+          <label for="floatingInputGrid">Language</label>
+          <select class="form-select" id="floatingInputGrid" name = "lang">
+            <option value="fr">fr</option>
+            <option>Any language</option>
+            <option>en</option>
+            <option>ar</option>
+            <option>bn</option>
+            <option>cs</option>
+            <option>da</option>
+            <option>de</option>
+            <option>el</option>
+            <option>es</option>
+            <option>fa</option>
+            <option>fil</option>
+            <option>he</option>
+            <option>hi</option>
+            <option>hu</option>
+            <option>id</option>
+            <option>it</option>
+            <option>ja</option>
+            <option>ko</option>
+            <option>msa</option>
+            <option>no</option>
+            <option>pl</option>
+            <option>pt</option>
+            <option>ro</option>
+            <option>ru</option>
+            <option>sv</option>
+            <option>th</option>
+            <option>tr</option>
+            <option>uk</option>
+            <option>ur</option>
+            <option>zh-cn</option>
+            <option>zh-tw</option>
+          </select>
+        </div>
+      </div>          
+</div>
+<p></p>
+
+
+    <input class="btn btn-primary btn-lg btn-block" type="submit" value='Predict'>
+
+  </form>
+
+  
+</body>
+
+</html>

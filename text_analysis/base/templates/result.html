@@ -1,0 +1,64 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Result</title>
+
+  <script src="https://kit.fontawesome.com/47101d2035.js" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <style>
+    .center {
+      position: absolute;
+      text-align: center;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: rgb(230, 239, 245);
+    }
+  </style>
+</head>
+
+<body class="center">
+
+  <!-- {% if result == 'yes' %}
+  <h1 style=" color: rgb(88, 180, 88); font-weight: 900;">
+  <i class="fas fa-swimmer"></i> Survived!
+
+  {% elif result == 'no' %}
+  <h1 style="color: rgb(212, 85, 85); font-weight: 900;">
+  <i class="fas fa-skull"></i> Coudn't survive!
+
+  {% else %}
+  <h1 style="color: rgb(31, 15, 15); font-weight: 900;">Query = {{result}}</h1>
+  {% endif %} -->
+  <h1>{{query}}</h1>
+  <!-- <p>{{df| safe}}</p> -->
+  <!-- <p>{{text_only}}</p> -->
+
+  <!-- <img src="{% static 'base/images/mypic1.png' %}" width="700" height="700" alt=""> -->
+
+  
+  <div class="card" style="width: 50rem;">
+    <img class="card-img-top" src="{% static 'base/images/mypic.png' %}" alt="Card image cap">
+    <div class="card-body">
+      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    </div>
+  </div>
+
+ 
+
+
+
+
+
+
+</body>
+
+</html>
