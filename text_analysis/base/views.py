@@ -1,4 +1,5 @@
 # https://www.youtube.com/watch?v=a1j8g01ics4
+from email.mime import image
 from django.shortcuts import render
 import snscrape.modules.twitter as sntwitter
 import pandas as pd
@@ -45,7 +46,7 @@ def couleur_blue(*args, **kwargs):
 def get_word_cloud(text_only, lang):
     stop_words = get_stop_words(lang) #pour nettoyer des appax, on peut en ajouter à la liste
     if lang == "fr":
-        ma_list_fr = ["c'est", "est","j'ai","ça", "ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+        ma_list_fr = ["c'est", "est","j'ai","ça", "ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","qu'il","qu'elle","vs","bcp","mdr", "d'un", "d'une", "s'il", "s'ils", "ya", "n'est"]
         for mot in ma_list_fr:
              if mot not in stop_words:
                  stop_words.append(mot)
@@ -56,12 +57,14 @@ def get_word_cloud(text_only, lang):
                  stop_words.append(mot)
     mask = np.array(Image.open("../ressources/mask_bird.jpg"))
     mask[mask == 1] = 255
-    wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 100, mask=mask).generate(text_only)
+    wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
 
 
-    fig = plt.figure(figsize=(8, 18), dpi=200) 
+    # fig = plt.figure(figsize=(10,8) , dpi=200) 
+    fig = plt.figure(figsize=(20,16) , dpi=200) 
     plt.imshow(wordcloud.recolor(color_func = couleur_blue))
     plt.axis("off")
+    fig.tight_layout(pad=0, w_pad=0, h_pad=0)
     fig.savefig('./base/static/base/images/mypic.png') 
 
 def getQuery(searsh_query):

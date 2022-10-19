@@ -12,33 +12,56 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-  <style>
-    .center {
-      position: absolute;
-      text-align: center;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: rgb(255, 255, 255);
-    }
-  </style>
+<style>
+  .center {
+    text-align : center;
+    margin-top: 3%;
+    margin-left: 10%;
+    margin-right: 10%;
+    {% comment %} width: 180px; {% endcomment %}
+    {% comment %} border: 3px solid green; {% endcomment %}
+    background-color: rgb(230, 239, 245);
+    padding: 10px; 
+  }
+  </style> 
 </head>
 
 <body class="center">
 
   <h1 style="color:rgb(44, 44, 90); font-weight: 700;">
-    <i class="fa-solid fa-cloud"></i> WORD CLOUD 
+    <i class="fa-solid fa-face-laugh-beam"></i> RESULTS
   </h1>
 
-  <img class="card-img-top" src="{% static 'base/images/mypic.png' %}" alt="Card image cap">
+  {% comment %} <img class="card-img-top" src="{% static 'base/images/mypic.png' %}"> {% endcomment %}
+<p> </p>
 
-{% comment %} <div class="card" style="width: 100%;%">
-    <img class="card-img-top" src="{% static 'base/images/mypic.png' %}" alt="Card image cap">
-    <div class="card-body">
+
+
+
+
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h3 style="color:rgb(44, 44, 90); font-weight: 700;">
+            <i class="fa-solid fa-cloud"></i> WORD CLOUD </h3>
+          <img class="card-img-top" src="{% static 'base/images/mypic.png' %}" alt="Card image-top"> 
+          <a href="#" class="btn btn-primary">Download cloud image</a>
+        </div>
+      </div>
     </div>
-  </div> {% endcomment %}
-
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h3 style="color:rgb(44, 44, 90); font-weight: 700;">
+            <i class="fa-solid fa-square-poll-vertical"></i> WORD CLOUD </h3>
+          <img class="card-img-top" src="{% static 'base/images/mypic.png' %}" alt="Card image-top"> 
+          <a href="#" class="btn btn-primary">Download cloud image</a>
+        </div>
+      </div>
+    </div>
+  </div>
 {% comment %} {{text_only|safe}} {% endcomment %}
  {% comment %} <p>{{text_only}}</p> {% endcomment %}
 
