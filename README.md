@@ -2,11 +2,8 @@
 Twitter API sentiment analysis
 </H1>
 
-<div style="text-align: justify">
-This application searches for the latest Tweets in a defined period. Then an AI model analyzes and summarizes the tweets to give the general sentiment on the subject or the person in question.
-
 Cette application permet à partir d'une recherche des derniers n tweets (n à définir par l'utilisateur) d'opérer une analyse des sentiments. Pour cela, l'applciation mobilise différents API mobilisant l'intelligence articielle. 
-</div>
+
 ![accueil](./ressources/apercu_accueil.png)
 
 
@@ -33,10 +30,14 @@ API :
 4. On présente les n tweet les plus likés, les plus retweetés, les plus replayés (commenté)
 
 Todo :
-Ajouter un masque : affiché dans un nuage de mots, afficher en rouge si négatif, afficher en vert si positif
+1. Ajouter un masque : affiché dans un nuage de mots
+2. Ajouter un button pour télécharger le nuage
+3. implémenter l'api
+4. afficher en rouge si négatif, afficher en vert si positif
+5. créer une fonction pour faire tourner même sans l'api
+6. explorer la possibilité d'analyser facebook, instagram
 Chercher un moyen de reconnaitre le sexe du posteur de tweet
 Historique des sentiments pour la même période
-Ajouter button pour ddl le nuage de mots
 Créer un forum django pour demander key propre de chaque utilisateur
 
 Axe amélioration:
