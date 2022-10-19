@@ -1,6 +1,5 @@
-<H1 align = "center" style="color:rgb(44, 44, 90)">
-<strong> Twitter API sentiment analysis </strong>
-<H1>
+Twitter API sentiment analysis
+
 
 This application searches for the latest Tweets in a defined period. Then an AI model analyzes and summarizes the tweets to give the general sentiment on the subject or the person in question.
 
