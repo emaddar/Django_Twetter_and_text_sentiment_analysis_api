@@ -30,8 +30,8 @@ API :
 4. On présente les n tweet les plus likés, les plus retweetés, les plus replayés (commenté)
 
 Todo :
-1. Ajouter un masque : affiché dans un nuage de mots
-2. Ajouter un button pour télécharger le nuage
+1. DONE : Ajouter un masque : affiché dans un nuage de mots
+2. DONE: Ajouter un button pour télécharger le nuage
 3. implémenter l'api
 4. afficher en rouge si négatif, afficher en vert si positif
 5. créer une fonction pour faire tourner même sans l'api

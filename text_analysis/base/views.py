@@ -10,6 +10,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from PIL import Image
+import json
+import requests
 
 
 def home(request):
@@ -46,7 +48,7 @@ def couleur_blue(*args, **kwargs):
 def get_word_cloud(text_only, lang):
     stop_words = get_stop_words(lang) #pour nettoyer des appax, on peut en ajouter à la liste
     if lang == "fr":
-        ma_list_fr = ["c'est", "est","j'ai","ça", "ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","qu'il","qu'elle","vs","bcp","mdr", "d'un", "d'une", "s'il", "s'ils", "ya", "n'est"]
+        ma_list_fr = ["c'est", "est","s'en","j'ai","etc", "ça", "n'a","n'as","ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","qu'il","qu'elle","vs","bcp","mdr", "d'un", "d'une", "s'il", "s'ils", "ya", "n'est"]
         for mot in ma_list_fr:
              if mot not in stop_words:
                  stop_words.append(mot)
@@ -94,6 +96,25 @@ def getQuery(searsh_query):
 
     return query
 
+# def get_api(text_only, lang):
+#     headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
+
+#     url ="https://api.edenai.run/v2/text/sentiment_analysis"
+#     payload={"providers": "amazon", 'language': lang, 'text': text_only}
+
+#     response = requests.post(url, json=payload, headers=headers)
+
+#     result = json.loads(response.text)
+#     x= result['amazon']['items']
+
+#     sentiment_rate_positif = round(x[0]['sentiment_rate'],4)
+#     sentiment_rate_neutre = round(x[1]['sentiment_rate'],4)
+#     sentiment_rate_negatif = round(x[2]['sentiment_rate'],4)
+
+#     dico_api = {"sentiment positif":sentiment_rate_positif,"sentiment neutre": sentiment_rate_neutre, "sentiment negatif":sentiment_rate_negatif}
+#     return dico_api
+
+
 def result(request):
     all_words = request.GET['all_words']                       #0
     limit = request.GET['limit']                               #1
@@ -117,12 +138,16 @@ def result(request):
 
     text_only = df_only_text(df) #avoir seulement le texte
 
+    # api = get_api(text_only, lang)
+    
+
     if text_only != "":
         get_word_cloud(text_only, lang)
    
         return render(request, 'result.html', {'query': query,
                                          'df' : df.to_html(),
                                          'text_only' : text_only}
+                                        #  'api':api}
                                         )
     else :
         return render(request, 'result_with_no_text.html', {'query': query}
