@@ -8,6 +8,7 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from PIL import Image
 
 
 def home(request):
@@ -44,7 +45,7 @@ def couleur_blue(*args, **kwargs):
 def get_word_cloud(text_only, lang):
     stop_words = get_stop_words(lang) #pour nettoyer des appax, on peut en ajouter à la liste
     if lang == "fr":
-        ma_list_fr = ["c'est", "est","j'ai","ça", "ca", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+        ma_list_fr = ["c'est", "est","j'ai","ça", "ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
         for mot in ma_list_fr:
              if mot not in stop_words:
                  stop_words.append(mot)
@@ -53,10 +54,12 @@ def get_word_cloud(text_only, lang):
         for mot in ma_list_en:
              if mot not in stop_words:
                  stop_words.append(mot)
-    wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 50).generate(text_only)
+    mask = np.array(Image.open("../ressources/mask_bird.jpg"))
+    mask[mask == 1] = 255
+    wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 100, mask=mask).generate(text_only)
 
 
-    fig = plt.figure(figsize=(4, 2), dpi=200) 
+    fig = plt.figure(figsize=(8, 18), dpi=200) 
     plt.imshow(wordcloud.recolor(color_func = couleur_blue))
     plt.axis("off")
     fig.savefig('./base/static/base/images/mypic.png') 
