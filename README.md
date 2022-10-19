@@ -6,6 +6,7 @@ Twitter API sentiment analysis
 This application searches for the latest Tweets in a defined period. Then an AI model analyzes and summarizes the tweets to give the general sentiment on the subject or the person in question.
 
 Cette application permet à partir d'une recherche des derniers n tweets (n à définir par l'utilisateur) d'opérer une analyse des sentiments. Pour cela, l'applciation mobilise différents API mobilisant l'intelligence articielle. 
+</p>
 
 ![accueil](./ressources/apercu_accueil.png)
 
