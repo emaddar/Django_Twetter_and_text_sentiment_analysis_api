@@ -1,4 +1,4 @@
-<H1 style="color:rgb(44, 44, 90)">
+<H1 style="color:rgb(44, 44, 90)", align = "center">
 Twitter API sentiment analysis
 </H1>
 
