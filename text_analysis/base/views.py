@@ -96,23 +96,32 @@ def getQuery(searsh_query):
 
     return query
 
-# def get_api(text_only, lang):
-#     headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
+def get_api(text_only, lang):
+    """This function will return the sentimemntal....
 
-#     url ="https://api.edenai.run/v2/text/sentiment_analysis"
-#     payload={"providers": "amazon", 'language': lang, 'text': text_only}
+    Args:
+        text_only (_str_): Les tweets
+        lang (_str_): les languages
 
-#     response = requests.post(url, json=payload, headers=headers)
+    Returns:
+        dictionary with probabilty of + or - or neutral ....
+    """
+    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
 
-#     result = json.loads(response.text)
-#     x= result['amazon']['items']
+    url ="https://api.edenai.run/v2/text/sentiment_analysis"
+    payload={"providers": "amazon", 'language': lang, 'text': text_only}
 
-#     sentiment_rate_positif = round(x[0]['sentiment_rate'],4)
-#     sentiment_rate_neutre = round(x[1]['sentiment_rate'],4)
-#     sentiment_rate_negatif = round(x[2]['sentiment_rate'],4)
+    response = requests.post(url, json=payload, headers=headers)
 
-#     dico_api = {"sentiment positif":sentiment_rate_positif,"sentiment neutre": sentiment_rate_neutre, "sentiment negatif":sentiment_rate_negatif}
-#     return dico_api
+    result = json.loads(response.text)
+    x= result['amazon']['items']
+
+    sentiment_rate_positif = round(x[0]['sentiment_rate'],4)
+    sentiment_rate_neutre = round(x[1]['sentiment_rate'],4)
+    sentiment_rate_negatif = round(x[2]['sentiment_rate'],4)
+
+    dico_api = {"sentiment positif":sentiment_rate_positif,"sentiment neutre": sentiment_rate_neutre, "sentiment negatif":sentiment_rate_negatif}
+    return dico_api
 
 
 def result(request):
@@ -140,14 +149,34 @@ def result(request):
 
     # api = get_api(text_only, lang)
     
+    # api = pd.DataFrame(api)
+
+    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
+
+    url ="https://api.edenai.run/v2/text/sentiment_analysis"
+    payload={"providers": "amazon", 'language': lang, 'text': text_only}
+
+    response = requests.post(url, json=payload, headers=headers)
+
+    result = json.loads(response.text)
+    x= result['amazon']['items']
+
+    sentiment_rate_positif = round(x[0]['sentiment_rate'],4)
+    sentiment_rate_neutre = round(x[1]['sentiment_rate'],4)
+    sentiment_rate_negatif = round(x[2]['sentiment_rate'],4)
+
+    dico_api = {"sentiment positif":sentiment_rate_positif,"sentiment neutre": sentiment_rate_neutre, "sentiment negatif":sentiment_rate_negatif}
+    
+    api = pd.DataFrame(list(dico_api.items()),columns = ['column1','column2'])
 
     if text_only != "":
         get_word_cloud(text_only, lang)
    
         return render(request, 'result.html', {'query': query,
                                          'df' : df.to_html(),
-                                         'text_only' : text_only}
-                                        #  'api':api}
+                                         'text_only' : text_only, 
+                                        #  'dico_api' : dico_api}
+                                         'api':api.to_html()}
                                         )
     else :
         return render(request, 'result_with_no_text.html', {'query': query}
