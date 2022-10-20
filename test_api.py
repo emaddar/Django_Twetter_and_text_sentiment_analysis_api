@@ -110,15 +110,6 @@ text_only_limited = "  Françaises, Français,  Mes chers compatriotes de métro
 # print(get_api(text_only_limited, "fr"))
 
 
-data = [0.6, 0.3, 0.9]
-data = [i*100 for i in data]
-labels = ["Positive", "Negative", "Neutral"]
-
-max_data = max(data)
-max_data_index = data.index(max(data))
-max_labels = labels[max_data_index]
-print(f"Max value : {max_data}")
-print(f"Max labels : {max_labels}")
 
 
 

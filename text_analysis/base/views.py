@@ -75,12 +75,18 @@ def getQuery(searsh_query):
 ###__________________World cloud__________________###
 
 #Couleur des mots du nuage
+def couleur_red(*args, **kwargs):
+    import random
+    return "rgb(255, 0, {})".format(random.randint(0, 170))
+
 def couleur_blue(*args, **kwargs):
     import random
     return "rgb({}, 0, 255)".format(random.randint(0, 170))
 
+
+
 #Fonction pour générer le nuage de mots
-def get_word_cloud(text_only, lang):
+def get_word_cloud(text_only, lang, status):
     stop_words = get_stop_words(lang) #Nettoyage des appax, possible d'en ajouter à la
     if lang == "fr":
         ma_list_fr = ["bcp", "Bcp", "trkl", "c'est", "est","s'en","j'ai","etc", "ça", "n'a","n'as","ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","qu'il","qu'elle","vs","bcp","mdr", "d'un", "d'une", "s'il", "s'ils", "ya", "n'est"]
@@ -95,12 +101,18 @@ def get_word_cloud(text_only, lang):
     mask = np.array(Image.open("../ressources/mask_bird.jpg"))
     mask[mask == 1] = 255
     wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
-
-    fig = plt.figure(figsize=(20,16) , dpi=200) 
-    plt.imshow(wordcloud.recolor(color_func = couleur_blue))
-    plt.axis("off")
-    fig.tight_layout(pad=0, w_pad=0, h_pad=0)
-    fig.savefig('./base/static/base/images/mypic.png') 
+    if status == "Positive" or "Neutral":
+        fig = plt.figure(figsize=(20,16) , dpi=200) 
+        plt.imshow(wordcloud.recolor(color_func = couleur_blue))
+        plt.axis("off")
+        fig.tight_layout(pad=0, w_pad=0, h_pad=0)
+        fig.savefig('./base/static/base/images/mypic.png') 
+    else : 
+        fig = plt.figure(figsize=(20,16) , dpi=200) 
+        plt.imshow(wordcloud.recolor(color_func = couleur_red))
+        plt.axis("off")
+        fig.tight_layout(pad=0, w_pad=0, h_pad=0)
+        fig.savefig('./base/static/base/images/mypic.png')        
 
 
 ###__________________Envoyer les résultats vers le template du site__________________###
@@ -137,6 +149,7 @@ def result(request):
 
     response = requests.post(url, json=payload, headers=headers)
     result = json.loads(response.text)
+    All_text = text_only
     n = len(text_only)
     if n >= 4000:
         text_only = text_only[:4000]
@@ -177,7 +190,7 @@ def result(request):
     max_labels = labels[max_data_index]
 #Envoi du résultat sur le site
     if text_only != "":
-        get_word_cloud(text_only, lang)
+        get_word_cloud(All_text, lang, max_labels)
    
         return render(request, 'result.html', {'query': query,
                                          'df' : df.to_html(),
