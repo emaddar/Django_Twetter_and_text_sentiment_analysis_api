@@ -8,6 +8,7 @@
   <title>Result</title>
 
   <script src="https://kit.fontawesome.com/8f51521eb7.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -18,8 +19,6 @@
     margin-top: 3%;
     margin-left: 10%;
     margin-right: 10%;
-    {% comment %} width: 180px; {% endcomment %}
-    {% comment %} border: 3px solid green; {% endcomment %}
     background-color: rgb(230, 239, 245);
     padding: 10px; 
   }
@@ -27,13 +26,9 @@
 </head>
 
 <body class="center">
-{% comment %} {% csrf_token %} {% endcomment %}
   <h1 style="color:rgb(44, 44, 90); font-weight: 700;">
     <i class="fa-solid fa-face-laugh-beam"></i> RESULTS
   </h1>
-
-  {% comment %} <img class="card-img-top" src="{% static 'base/images/mypic.png' %}"> {% endcomment %}
-<p> </p>
 
 
   <div class="row">
@@ -51,15 +46,43 @@
       <div class="card">
         <div class="card-body">
           <h3 style="color:rgb(44, 44, 90); font-weight: 700;">
-            <i class="fa-solid fa-square-poll-vertical"></i> WORD CLOUD </h3>
-            {{api_df|safe}}
-          <a href="#" class="btn btn-primary">Download cloud image</a>
-          <p> <font color="red">Attention : </font> Cette analyse a été effectuée sur les 4815 premiers characters des tweets récupérés et classés selon le nombre de likes (des plus likés aux moins likés)</p>
+            <i class="fa-solid fa-square-poll-vertical"></i> Sentimental analysis </h3>
+            {% comment %} {{api_df|safe}} {% endcomment %}
+
+            <canvas id="myChart" width="300" height="300"></canvas>
+            <script>
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: {{labels|safe}},
+                    datasets: [{
+                        label: "legende",
+                        data: {{data|safe}},
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.5)',
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(255, 206, 86, 0.5)'                        
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)' 
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                  
+                    }
+                }
+            );
+            </script>
+          <p> <font color="red">Attention : </font> Cette analyse a été effectuée sur les {{n}} premiers caractères des tweets récupérés et classés selon le nombre de likes (des plus likés aux moins likés)</p>
         </div>
       </div>
     </div>
   </div>
-
 
 </body>
 

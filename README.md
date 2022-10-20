@@ -34,12 +34,14 @@ Todo :
 2. DONE: Ajouter un button pour télécharger le nuage
 3. Done: classer les tweets les plus likés 
 4. DONE: mettre une limite à 10000 characters + ajouter message d'information
-5. implémenter l'api
-6. présenter graphique + liste des 3 tweets les plus importants + historique
-7. créer un forum pour demander la key
-8. afficher en rouge si négatif, afficher en vert si positif
-9. créer une fonction pour faire tourner même sans l'api
-10. explorer la possibilité d'analyser facebook, instagram
+5. DONE: implémenter l'api
+6. présenter graphique 
+7. liste des 3 tweets les plus importants 
+8. historique en graphique à 1 semaine/1 mois/1 an
+9. créer un forum pour demander la key
+10. afficher en rouge si négatif, afficher en vert si positif
+11. créer une fonction pour faire tourner même sans l'api
+12. explorer la possibilité d'analyser facebook, instagram
 Chercher un moyen de reconnaitre le sexe du posteur de tweet
 Historique des sentiments pour la même période
 Créer un forum django pour demander key propre de chaque utilisateur

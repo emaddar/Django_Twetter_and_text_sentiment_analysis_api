@@ -159,6 +159,16 @@ def result(request):
 
     api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
 
+###__________________Mise en forme du graphique de l'analyse sentimentale__________________###
+    labels = api_df['sentiment'].tolist()
+    data = api_df['sentiment_rate'].tolist()
+
+
+    #Supression sentiment Mixed
+    labels.remove('Mixed')
+    del data[-1]
+
+
 #Envoi du résultat sur le site
     if text_only != "":
         get_word_cloud(text_only, lang)
@@ -166,7 +176,10 @@ def result(request):
         return render(request, 'result.html', {'query': query,
                                          'df' : df.to_html(),
                                          'text_only' : text_only,
-                                         'api_df' : api_df.to_html}
+                                         'api_df' : api_df.to_html,
+                                         'n':len(text_only),
+                                         'labels':labels,
+                                         'data':data}
                                         )
     else :
         return render(request, 'result_with_no_text.html', {'query': query}
