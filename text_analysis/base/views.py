@@ -141,34 +141,40 @@ def result(request):
     if n >= 4000:
         text_only = text_only[:4000]
 
-    if result['amazon']['status'] == 'fail':
-        for i in range(20):
-            n -= 1000
-            text_only = text_only[:n]
-            payload={"providers": "amazon", 'language': lang, 'text': text_only}
-            response = requests.post(url, json=payload, headers=headers)
-            result = json.loads(response.text)
-            if result['amazon']['status'] != 'fail':
-                break
-    x = result['amazon']['items']
+#     if result['amazon']['status'] == 'fail':
+#         for i in range(20):
+#             n -= 1000
+#             text_only = text_only[:n]
+#             payload={"providers": "amazon", 'language': lang, 'text': text_only}
+#             response = requests.post(url, json=payload, headers=headers)
+#             result = json.loads(response.text)
+#             if result['amazon']['status'] != 'fail':
+#                 break
+#     x = result['amazon']['items']
 
-#Création dataframe du résultat de l'API
-    api_dico = {}
-    for i in range(len(x)):
-        api_dico[x[i]['sentiment']] = round(x[i]['sentiment_rate'],4)*100
+# #Création dataframe du résultat de l'API
+#     api_dico = {}
+#     for i in range(len(x)):
+#         api_dico[x[i]['sentiment']] = round(x[i]['sentiment_rate'],4)*100
 
-    api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
+#     api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
 
-###__________________Mise en forme du graphique de l'analyse sentimentale__________________###
-    labels = api_df['sentiment'].tolist()
-    data = api_df['sentiment_rate'].tolist()
-
-
-    #Supression sentiment Mixed
-    labels.remove('Mixed')
-    del data[-1]
+# ###__________________Mise en forme du graphique de l'analyse sentimentale__________________###
+#     labels = api_df['sentiment'].tolist()
+#     data = api_df['sentiment_rate'].tolist()
 
 
+#     #Supression sentiment Mixed
+#     labels.remove('Mixed')
+#     del data[-1]
+
+    data = [60, 30, 10]
+    labels = ["Positive", "Negative", "Neutral"]
+
+
+    max_data = max(data)
+    max_data_index = data.index(max(data))
+    max_labels = labels[max_data_index]
 #Envoi du résultat sur le site
     if text_only != "":
         get_word_cloud(text_only, lang)
@@ -176,10 +182,12 @@ def result(request):
         return render(request, 'result.html', {'query': query,
                                          'df' : df.to_html(),
                                          'text_only' : text_only,
-                                         'api_df' : api_df.to_html,
+                                        #  'api_df' : api_df.to_html,
                                          'n':len(text_only),
                                          'labels':labels,
-                                         'data':data}
+                                         'data':data,
+                                         'max_data':round(max_data,2),
+                                         'max_labels':max_labels}
                                         )
     else :
         return render(request, 'result_with_no_text.html', {'query': query}
