@@ -13,7 +13,7 @@ from PIL import Image
 import json
 import requests
 
-
+###__________________Scrape des tweets__________________###
 def home(request):
     return render(request, 'index.html')
 
@@ -33,44 +33,20 @@ def get_tweets(query, limit):
     df = pd.DataFrame(tweets, columns=['Date', 'User', 'Tweet', 'Like', 'Replay', 'Retweet'])
     return df
 
+
+###__________________Nettoyage du texte__________________###
+#Supression brouillard du texte
 def df_only_text(df):
     tweet_text = " ".join(list(df['Tweet']))
     tweet_text = re.sub(r'http\S+', '', tweet_text)
     tweet_text = re.sub(r'@\S+', '', tweet_text)
     tweet_text = re.sub(r'#\S+', '', tweet_text)
+    tweet_text = re.sub('\n+', '', tweet_text)
     return tweet_text
 
-
-def couleur_blue(*args, **kwargs):
-    import random
-    return "rgb({}, 0, 255)".format(random.randint(0, 170))
-    
-def get_word_cloud(text_only, lang):
-    stop_words = get_stop_words(lang) #pour nettoyer des appax, on peut en ajouter à la liste
-    if lang == "fr":
-        ma_list_fr = ["c'est", "est","s'en","j'ai","etc", "ça", "n'a","n'as","ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","qu'il","qu'elle","vs","bcp","mdr", "d'un", "d'une", "s'il", "s'ils", "ya", "n'est"]
-        for mot in ma_list_fr:
-             if mot not in stop_words:
-                 stop_words.append(mot)
-    elif lang == "en":
-        ma_list_en = ["day","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
-        for mot in ma_list_en:
-             if mot not in stop_words:
-                 stop_words.append(mot)
-    mask = np.array(Image.open("../ressources/mask_bird.jpg"))
-    mask[mask == 1] = 255
-    wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
-
-
-    # fig = plt.figure(figsize=(10,8) , dpi=200) 
-    fig = plt.figure(figsize=(20,16) , dpi=200) 
-    plt.imshow(wordcloud.recolor(color_func = couleur_blue))
-    plt.axis("off")
-    fig.tight_layout(pad=0, w_pad=0, h_pad=0)
-    fig.savefig('./base/static/base/images/mypic.png') 
-
+#Création d'un texte unique pour l'analyse
 def getQuery(searsh_query):
-    query = searsh_query[0] + " lang:" + searsh_query[13] + " " #  + searsh_query[1] + " "
+    query = searsh_query[0] + " lang:" + searsh_query[13] + " " 
     if searsh_query[2] != "":
         query += '"' + searsh_query[2] + '"' + " "
     if searsh_query[4] != "":
@@ -96,33 +72,38 @@ def getQuery(searsh_query):
 
     return query
 
-def get_api(text_only, lang):
-    """This function will return the sentimemntal....
+###__________________World cloud__________________###
 
-    Args:
-        text_only (_str_): Les tweets
-        lang (_str_): les languages
+#Couleur des mots du nuage
+def couleur_blue(*args, **kwargs):
+    import random
+    return "rgb({}, 0, 255)".format(random.randint(0, 170))
 
-    Returns:
-        dictionary with probabilty of + or - or neutral ....
-    """
-    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
+#Fonction pour générer le nuage de mots
+def get_word_cloud(text_only, lang):
+    stop_words = get_stop_words(lang) #Nettoyage des appax, possible d'en ajouter à la
+    if lang == "fr":
+        ma_list_fr = ["bcp", "Bcp", "trkl", "c'est", "est","s'en","j'ai","etc", "ça", "n'a","n'as","ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","qu'il","qu'elle","vs","bcp","mdr", "d'un", "d'une", "s'il", "s'ils", "ya", "n'est"]
+        for mot in ma_list_fr:
+             if mot not in stop_words:
+                 stop_words.append(mot)
+    elif lang == "en":
+        ma_list_en = ["day","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+        for mot in ma_list_en:
+             if mot not in stop_words:
+                 stop_words.append(mot)
+    mask = np.array(Image.open("../ressources/mask_bird.jpg"))
+    mask[mask == 1] = 255
+    wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
 
-    url ="https://api.edenai.run/v2/text/sentiment_analysis"
-    payload={"providers": "amazon", 'language': lang, 'text': text_only}
+    fig = plt.figure(figsize=(20,16) , dpi=200) 
+    plt.imshow(wordcloud.recolor(color_func = couleur_blue))
+    plt.axis("off")
+    fig.tight_layout(pad=0, w_pad=0, h_pad=0)
+    fig.savefig('./base/static/base/images/mypic.png') 
 
-    response = requests.post(url, json=payload, headers=headers)
 
-    result = json.loads(response.text)
-    x= result['amazon']['items']
-
-    sentiment_rate_positif = round(x[0]['sentiment_rate'],4)
-    sentiment_rate_neutre = round(x[1]['sentiment_rate'],4)
-    sentiment_rate_negatif = round(x[2]['sentiment_rate'],4)
-
-    dico_api = {"sentiment positif":sentiment_rate_positif,"sentiment neutre": sentiment_rate_neutre, "sentiment negatif":sentiment_rate_negatif}
-    return dico_api
-
+###__________________Envoyer les résultats vers le template du site__________________###
 
 def result(request):
     all_words = request.GET['all_words']                       #0
@@ -144,39 +125,48 @@ def result(request):
                                             These_hastags, From_acounts, To_acounts, Minimun_replies, Minimum_likes,
                                             Minimum_retweets, from_date, to_date, lang])
     df = get_tweets(query, int(limit))
+    df = df.sort_values(['Like', 'Retweet','Replay'],ascending=False)
 
-    text_only = df_only_text(df) #avoir seulement le texte
-
-    # api = get_api(text_only, lang)
+    text_only = df_only_text(df)
     
-    # api = pd.DataFrame(api)
-
+###__________________Appel de l'API analyse de sentiments__________________###
     headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
-
+    lang = "fr"
     url ="https://api.edenai.run/v2/text/sentiment_analysis"
     payload={"providers": "amazon", 'language': lang, 'text': text_only}
 
     response = requests.post(url, json=payload, headers=headers)
-
     result = json.loads(response.text)
-    x= result['amazon']['items']
+    n = len(text_only)
+    if n >= 4000:
+        text_only = text_only[:4000]
 
-    sentiment_rate_positif = round(x[0]['sentiment_rate'],4)
-    sentiment_rate_neutre = round(x[1]['sentiment_rate'],4)
-    sentiment_rate_negatif = round(x[2]['sentiment_rate'],4)
+    if result['amazon']['status'] == 'fail':
+        for i in range(20):
+            n -= 1000
+            text_only = text_only[:n]
+            payload={"providers": "amazon", 'language': lang, 'text': text_only}
+            response = requests.post(url, json=payload, headers=headers)
+            result = json.loads(response.text)
+            if result['amazon']['status'] != 'fail':
+                break
+    x = result['amazon']['items']
 
-    dico_api = {"sentiment positif":sentiment_rate_positif,"sentiment neutre": sentiment_rate_neutre, "sentiment negatif":sentiment_rate_negatif}
-    
-    api = pd.DataFrame(list(dico_api.items()),columns = ['column1','column2'])
+#Création dataframe du résultat de l'API
+    api_dico = {}
+    for i in range(len(x)):
+        api_dico[x[i]['sentiment']] = round(x[i]['sentiment_rate'],4)*100
 
+    api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
+
+#Envoi du résultat sur le site
     if text_only != "":
         get_word_cloud(text_only, lang)
    
         return render(request, 'result.html', {'query': query,
                                          'df' : df.to_html(),
-                                         'text_only' : text_only, 
-                                        #  'dico_api' : dico_api}
-                                         'api':api.to_html()}
+                                         'text_only' : text_only,
+                                         'api_df' : api_df.to_html}
                                         )
     else :
         return render(request, 'result_with_no_text.html', {'query': query}

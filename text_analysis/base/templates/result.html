@@ -52,16 +52,14 @@
         <div class="card-body">
           <h3 style="color:rgb(44, 44, 90); font-weight: 700;">
             <i class="fa-solid fa-square-poll-vertical"></i> WORD CLOUD </h3>
-          {{api|safe}}
+            {{api_df|safe}}
           <a href="#" class="btn btn-primary">Download cloud image</a>
+          <p> <font color="red">Attention : </font> Cette analyse a été effectuée sur les 4815 premiers characters des tweets récupérés et classés selon le nombre de likes (des plus likés aux moins likés)</p>
         </div>
       </div>
     </div>
   </div>
-{% comment %} {{text_only|safe}} {% endcomment %}
- {% comment %} <p>{{text_only}}</p> {% endcomment %}
 
-{% comment %} {{api}} {% endcomment %}
 
 </body>
 
