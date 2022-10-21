@@ -12,6 +12,7 @@ import os
 from PIL import Image
 import json
 import requests
+import random
 
 ###__________________Scrape des tweets__________________###
 def home(request):
@@ -28,9 +29,9 @@ def get_tweets(query, limit):
         if len(tweets) == limit:
             break
         else:
-            tweets.append([tweet.date, tweet.username, tweet.content, tweet.likeCount, tweet.replyCount, tweet.retweetCount])
+            tweets.append([tweet.date, tweet.username, tweet.content, tweet.likeCount, tweet.replyCount, tweet.retweetCount, tweet.url])
 
-    df = pd.DataFrame(tweets, columns=['Date', 'User', 'Tweet', 'Like', 'Replay', 'Retweet'])
+    df = pd.DataFrame(tweets, columns=['Date', 'User', 'Tweet', 'Like', 'Replay', 'Retweet', 'Url'])
     return df
 
 
@@ -76,11 +77,9 @@ def getQuery(searsh_query):
 
 #Couleur des mots du nuage
 def couleur_red(*args, **kwargs):
-    import random
     return "rgb(255, 0, {})".format(random.randint(0, 170))
 
 def couleur_blue(*args, **kwargs):
-    import random
     return "rgb({}, 0, 255)".format(random.randint(0, 170))
 
 
@@ -101,7 +100,7 @@ def get_word_cloud(text_only, lang, status):
     mask = np.array(Image.open("../ressources/mask_bird.jpg"))
     mask[mask == 1] = 255
     wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
-    if status == "Positive" or "Neutral":
+    if status == "Positive" or status == "Neutral":
         fig = plt.figure(figsize=(20,16) , dpi=200) 
         plt.imshow(wordcloud.recolor(color_func = couleur_blue))
         plt.axis("off")
@@ -139,8 +138,12 @@ def result(request):
     df = get_tweets(query, int(limit))
     df = df.sort_values(['Like', 'Retweet','Replay'],ascending=False)
 
+
+
     text_only = df_only_text(df)
     
+
+
 ###__________________Appel de l'API analyse de sentiments__________________###
     headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
     lang = "fr"
@@ -191,16 +194,72 @@ def result(request):
 #Envoi du résultat sur le site
     if text_only != "":
         get_word_cloud(All_text, lang, max_labels)
+
+            #####################################################################
+            #                       Get  3 Tweets most liked                    #
+            #####################################################################
+
+        tweet_1_date = df.iloc[0]['Date']
+        tweet_2_date = df.iloc[1]['Date']
+        tweet_3_date = df.iloc[2]['Date']
+
+        tweet_1_User = df.iloc[0]['User']
+        tweet_2_User = df.iloc[1]['User']
+        tweet_3_User = df.iloc[2]['User']
+
+
+        tweet_1_Tweet = df.iloc[0]['Tweet']
+        tweet_2_Tweet = df.iloc[1]['Tweet']
+        tweet_3_Tweet = df.iloc[2]['Tweet']  
+
+        tweet_1_Like = df.iloc[0]['Like']
+        tweet_2_Like = df.iloc[1]['Like']
+        tweet_3_Like = df.iloc[2]['Like']    
+
+        tweet_1_Replay = df.iloc[0]['Replay']
+        tweet_2_Replay = df.iloc[1]['Replay']
+        tweet_3_Replay = df.iloc[2]['Replay'] 
+
+        tweet_1_Retweet = df.iloc[0]['Retweet']
+        tweet_2_Retweet = df.iloc[1]['Retweet']
+        tweet_3_Retweet = df.iloc[2]['Retweet']    
+
+        tweet_1_Url = df.iloc[0]['Url']
+        tweet_2_Url = df.iloc[1]['Url']
+        tweet_3_Url = df.iloc[2]['Url']    
+
    
         return render(request, 'result.html', {'query': query,
-                                         'df' : df.to_html(),
+                                         'df' : df[:3].to_html(),
                                          'text_only' : text_only,
                                         #  'api_df' : api_df.to_html,
                                          'n':len(text_only),
                                          'labels':labels,
                                          'data':data,
                                          'max_data':round(max_data,2),
-                                         'max_labels':max_labels}
+                                         'max_labels':max_labels,
+                                         'tweet_1_date':tweet_1_date,
+                                         'tweet_2_date':tweet_2_date,
+                                         'tweet_3_date':tweet_3_date,
+                                         "tweet_1_User":tweet_1_User,
+                                         "tweet_2_User":tweet_2_User,
+                                         "tweet_3_User":tweet_3_User,
+                                         "tweet_1_Tweet":tweet_1_Tweet,
+                                         "tweet_2_Tweet":tweet_2_Tweet,
+                                         "tweet_3_Tweet":tweet_3_Tweet,
+                                         "tweet_1_Like":tweet_1_Like,
+                                         "tweet_2_Like":tweet_2_Like,
+                                         "tweet_3_Like":tweet_3_Like,
+                                         "tweet_1_Replay":tweet_1_Replay,
+                                         "tweet_2_Replay":tweet_2_Replay,
+                                         "tweet_3_Replay":tweet_3_Replay,
+                                         "tweet_1_Retweet":tweet_1_Retweet,
+                                         "tweet_2_Retweet":tweet_2_Retweet,
+                                         "tweet_3_Retweet":tweet_3_Retweet,
+                                         "tweet_1_Url" : tweet_1_Url,
+                                         "tweet_2_Url" : tweet_2_Url,
+                                         "tweet_3_Url" : tweet_3_Url,
+                                         }
                                         )
     else :
         return render(request, 'result_with_no_text.html', {'query': query}

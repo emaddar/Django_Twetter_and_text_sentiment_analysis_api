@@ -25,8 +25,20 @@
   .CharBox{
     text-align : center;
     width: 470px;
-    height: 370px;
+    height: 385px;
   }
+  .special-card {
+    {% comment %} /* create a custom class so you 
+       do not run into specificity issues 
+       against bootstraps styles
+       which tends to work better than using !important 
+       (future you will thank you later)*/ {% endcomment %}
+    
+      {% comment %} background-color: rgba(245, 245, 245, 1); {% endcomment %}
+      {% comment %} opacity: .4; {% endcomment %}
+      text-align : left;
+      color : rgb(29, 161, 242);
+    }
   </style> 
 </head>
 
@@ -67,43 +79,192 @@
             <i class="fa-solid fa-square-poll-vertical"></i> Sentimental analysis </h3>
             
             <div class="CharBox">
-            <canvas id="myChart"></canvas>
-            <script>
-            const ctx = document.getElementById('myChart').getContext('2d');
-            const myChart = new Chart(ctx, {
-                type: 'polarArea',
-                data: {
-                    labels: {{labels|safe}},
-                    datasets: [{
-                        label: "legende",
-                        data: {{data|safe}},
-                        backgroundColor: [
-                            'rgba(75, 192, 192, 0.5)',
-                            'rgba(255, 99, 132, 0.5)',
-                            'rgba(255, 206, 86, 0.5)'                        
-                        ],
-                        borderColor: [
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(255, 206, 86, 1)' 
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                  
-                    }
-                }
-            );
-            </script>
+              <canvas id="myChart"></canvas>
+              <script>
+              const ctx = document.getElementById('myChart').getContext('2d');
+              const myChart = new Chart(ctx, {
+                  type: 'polarArea',
+                  data: {
+                      labels: {{labels|safe}},
+                      datasets: [{
+                          label: "legende",
+                          data: {{data|safe}},
+                          backgroundColor: [
+                              'rgba(75, 192, 192, 0.5)',
+                              'rgba(255, 99, 132, 0.5)',
+                              'rgba(255, 206, 86, 0.5)'                        
+                          ],
+                          borderColor: [
+                              'rgba(75, 192, 192, 1)',
+                              'rgba(255, 99, 132, 1)',
+                              'rgba(255, 206, 86, 1)' 
+                          ],
+                          borderWidth: 1
+                      }]
+                  },
+                  options: {
+                    
+                      }
+                  }
+              );
+              </script>
             </div>
-          <p> <font color="red">Attention : </font> Cette analyse a été effectuée sur les {{n}} premiers caractères des tweets récupérés et classés selon le nombre de likes (des plus likés aux moins likés)</p>
+          <p> </p>
+          <div class="card-footer">
+            <small class="text-muted"><font color="red">Attention : </font> Cette analyse a été effectuée sur les {{n}} premiers caractères des tweets récupérés et classés selon le nombre de likes (des plus likés aux moins likés)</small>
+          </div>
         </div>
       </div>
     </div>
   
 </div>
 
-</body>
+<p></p>
+<h1 style="color:rgb(44, 44, 90); font-weight: 700;">
+  <i class="fa-solid fa-thumbs-up"></i> TWEETS MOST LIKED
+</h1>
+<p></p>
 
+
+<div class="card-deck">
+  <div class="card">
+    <div class="card-header">
+      <i class="fa-solid fa-heart"></i> {{tweet_1_Like}}
+      <i class="fa-solid fa-comment"></i> {{tweet_1_Replay}}
+      <i class="fa-solid fa-retweet"></i>{{tweet_1_Retweet}}
+    </div>
+    {% comment %} <img class="card-img-top" src="..." alt="Card image cap"> {% endcomment %}
+    <div class="card-body">
+      <h5 class="card-title special-card">
+        <i class="fa-brands fa-twitter"></i>@{{tweet_1_User}}
+      </h5>
+      <p class="card-text">{{tweet_1_Tweet}}</p>
+      <a href={{tweet_1_Url}}>See the tweet in Twitter</a>
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">{{tweet_1_date}}</small>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <i class="fa-solid fa-heart"></i> {{tweet_2_Like}}
+      <i class="fa-solid fa-comment"></i> {{tweet_2_Replay}}
+      <i class="fa-solid fa-retweet"></i>{{tweet_2_Retweet}}
+    </div>
+    {% comment %} <img class="card-img-top" src="..." alt="Card image cap"> {% endcomment %}
+    <div class="card-body">
+      <h5 class="card-title special-card">
+        <i class="fa-brands fa-twitter"></i> @{{tweet_2_User}}
+      </h5>
+      <p class="card-text">{{tweet_2_Tweet}}</p>
+      <a href={{tweet_2_Url}}>See the tweet in Twitter</a>
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">{{tweet_2_date}}</small>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <i class="fa-solid fa-heart"></i> {{tweet_3_Like}}
+      <i class="fa-solid fa-comment"></i> {{tweet_3_Replay}}
+      <i class="fa-solid fa-retweet"></i>{{tweet_3_Retweet}}
+    </div>
+    {% comment %} <img class="card-img-top" src="..." alt="Card image cap"> {% endcomment %}
+    <div class="card-body">
+      <h5 class="card-title special-card">
+        <i class="fa-brands fa-twitter"></i>@{{tweet_3_User}}
+      </h5>
+      <p class="card-text">{{tweet_3_Tweet}}</p>
+      <a href={{tweet_3_Url}}>See the tweet in Twitter</a>
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">{{tweet_3_date}}</small>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p></p>
+<h1 style="color:rgb(44, 44, 90); font-weight: 700;">
+  <i class="fa-solid fa-thumbs-up"></i> TWEETS MOST LIKED
+</h1>
+<p></p>
+
+
+<div class="card-deck">
+  <div class="card">
+    <div class="card-header">
+      <i class="fa-solid fa-heart"></i> {{tweet_1_Like}}
+      <i class="fa-solid fa-comment"></i> {{tweet_1_Replay}}
+      <i class="fa-solid fa-retweet"></i>{{tweet_1_Retweet}}
+    </div>
+    {% comment %} <img class="card-img-top" src="..." alt="Card image cap"> {% endcomment %}
+    <div class="card-body">
+      <h5 class="card-title special-card">
+        <i class="fa-brands fa-twitter"></i>@{{tweet_1_User}}
+      </h5>
+      <p class="card-text">{{tweet_1_Tweet}}</p>
+      <a href={{tweet_1_Url}}>See the tweet in Twitter</a>
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">{{tweet_1_date}}</small>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <i class="fa-solid fa-heart"></i> {{tweet_2_Like}}
+      <i class="fa-solid fa-comment"></i> {{tweet_2_Replay}}
+      <i class="fa-solid fa-retweet"></i>{{tweet_2_Retweet}}
+    </div>
+    {% comment %} <img class="card-img-top" src="..." alt="Card image cap"> {% endcomment %}
+    <div class="card-body">
+      <h5 class="card-title special-card">
+        <i class="fa-brands fa-twitter"></i> @{{tweet_2_User}}
+      </h5>
+      <p class="card-text">{{tweet_2_Tweet}}</p>
+      <a href={{tweet_2_Url}}>See the tweet in Twitter</a>
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">{{tweet_2_date}}</small>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <i class="fa-solid fa-heart"></i> {{tweet_3_Like}}
+      <i class="fa-solid fa-comment"></i> {{tweet_3_Replay}}
+      <i class="fa-solid fa-retweet"></i>{{tweet_3_Retweet}}
+    </div>
+    {% comment %} <img class="card-img-top" src="..." alt="Card image cap"> {% endcomment %}
+    <div class="card-body">
+      <h5 class="card-title special-card">
+        <i class="fa-brands fa-twitter"></i>@{{tweet_3_User}}
+      </h5>
+      
+      
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">{{tweet_3_date}}</small>
+    </div>
+  </div>
+</div>
+
+
+
+</body>
 </html>
