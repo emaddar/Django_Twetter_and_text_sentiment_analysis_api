@@ -112,7 +112,3 @@ text_only_limited = "  Françaises, Français,  Mes chers compatriotes de métro
 
 
 
-
-for i in range(3):
-    locals()["group"+str(i)] = i
-

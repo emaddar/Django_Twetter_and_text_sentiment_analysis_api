@@ -196,7 +196,8 @@
 
 <p></p>
 <h4 style="color:rgb(44, 44, 90); font-weight: 700; display: flex; justify-content: space-between">
-     <a href="{{request.META.HTTP_REFERER|escape}}"><i class="fa-solid fa-angles-left"></i> Back</a> <a href="#"><i class="fa-solid fa-angles-up"></i> Go to top</a>
+     <a href="{% url 'tweeter_scrape' %}"><i class="fa-solid fa-angles-left"></i> Back</a> <a href="#"><i class="fa-solid fa-angles-up"></i> Go to top</a>
+     {% comment %} <a href="{% url 'tweeter_scrape' %}"><i class="fa-solid fa-angles-left"></i> Back</a> {% endcomment %}
 </h4>
 
 
