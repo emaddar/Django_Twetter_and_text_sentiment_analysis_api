@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
 <head>
@@ -25,7 +25,16 @@
 
 
 
-<body class="center" >
+<body class="center" > -->
+
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<main>
+  
 
   <h1 style="color:rgb(44, 44, 90); font-weight: 700;">
     <i class="fa-brands fa-twitter"></i> Twitter API sentiment analysis 
@@ -247,6 +256,12 @@
 
 
   <a href="{% url 'home' %}"> <i class="fa-solid fa-angles-left"></i> Back to Home </a>
-</body>
 
-</html>
+
+
+
+<!-- </body>
+</html> -->
+
+</main>
+{% endblock content %}
