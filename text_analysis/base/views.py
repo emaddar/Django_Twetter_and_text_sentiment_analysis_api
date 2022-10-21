@@ -151,12 +151,14 @@ def result(request):
     url ="https://api.edenai.run/v2/text/sentiment_analysis"
     payload={"providers": "amazon", 'language': lang, 'text': text_only}
 
-    response = requests.post(url, json=payload, headers=headers)
-    result = json.loads(response.text)
+
     All_text = text_only
-    n = len(text_only)
-    if n >= 4000:
-        text_only = text_only[:4000]
+    
+    # response = requests.post(url, json=payload, headers=headers)
+    # result = json.loads(response.text)
+    # n = len(text_only)
+    # if n >= 4000:
+    #     text_only = text_only[:4000]
 
 #     if result['amazon']['status'] == 'fail':
 #         for i in range(20):
