@@ -198,35 +198,37 @@ def result(request):
             #####################################################################
             #                       Get  3 Tweets most liked                    #
             #####################################################################
+        if len(df)>=3:
+            tweet_1_date = df.iloc[0]['Date']
+            tweet_2_date = df.iloc[1]['Date']
+            tweet_3_date = df.iloc[2]['Date']
 
-        tweet_1_date = df.iloc[0]['Date']
-        tweet_2_date = df.iloc[1]['Date']
-        tweet_3_date = df.iloc[2]['Date']
-
-        tweet_1_User = df.iloc[0]['User']
-        tweet_2_User = df.iloc[1]['User']
-        tweet_3_User = df.iloc[2]['User']
+            tweet_1_User = df.iloc[0]['User']
+            tweet_2_User = df.iloc[1]['User']
+            tweet_3_User = df.iloc[2]['User']
 
 
-        tweet_1_Tweet = df.iloc[0]['Tweet']
-        tweet_2_Tweet = df.iloc[1]['Tweet']
-        tweet_3_Tweet = df.iloc[2]['Tweet']  
+            tweet_1_Tweet = df.iloc[0]['Tweet']
+            tweet_2_Tweet = df.iloc[1]['Tweet']
+            tweet_3_Tweet = df.iloc[2]['Tweet']  
 
-        tweet_1_Like = df.iloc[0]['Like']
-        tweet_2_Like = df.iloc[1]['Like']
-        tweet_3_Like = df.iloc[2]['Like']    
+            tweet_1_Like = df.iloc[0]['Like']
+            tweet_2_Like = df.iloc[1]['Like']
+            tweet_3_Like = df.iloc[2]['Like']    
 
-        tweet_1_Replay = df.iloc[0]['Replay']
-        tweet_2_Replay = df.iloc[1]['Replay']
-        tweet_3_Replay = df.iloc[2]['Replay'] 
+            tweet_1_Replay = df.iloc[0]['Replay']
+            tweet_2_Replay = df.iloc[1]['Replay']
+            tweet_3_Replay = df.iloc[2]['Replay'] 
 
-        tweet_1_Retweet = df.iloc[0]['Retweet']
-        tweet_2_Retweet = df.iloc[1]['Retweet']
-        tweet_3_Retweet = df.iloc[2]['Retweet']    
+            tweet_1_Retweet = df.iloc[0]['Retweet']
+            tweet_2_Retweet = df.iloc[1]['Retweet']
+            tweet_3_Retweet = df.iloc[2]['Retweet']    
 
-        tweet_1_Url = df.iloc[0]['Url']
-        tweet_2_Url = df.iloc[1]['Url']
-        tweet_3_Url = df.iloc[2]['Url']    
+            tweet_1_Url = df.iloc[0]['Url']
+            tweet_2_Url = df.iloc[1]['Url']
+            tweet_3_Url = df.iloc[2]['Url']    
+        else : 
+            return render(request, 'result_with_no_text.html', {'query': query})
 
    
         return render(request, 'result.html', {'query': query,
