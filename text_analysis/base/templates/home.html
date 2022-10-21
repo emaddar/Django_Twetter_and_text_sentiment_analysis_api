@@ -5,7 +5,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Result</title>
+  <title>Home</title>
 
   <script src="https://kit.fontawesome.com/8f51521eb7.js" crossorigin="anonymous"></script>
 
@@ -21,26 +21,24 @@
       transform: translate(-50%, -50%);
       font-family: Arial, Helvetica, sans-serif;
       background-color: rgb(230, 239, 245);
-      {% comment %} background-image: url('mypic.png'); {% endcomment %}
     }
   </style>
 </head>
 
 <body class="center">
 
-  <h1 style="color:rgb(187, 4, 26); font-weight: 700;">
-    <i class="fa-solid fa-heart-crack"></i>
+  <h1 style="color:rgb(50, 92, 87); font-weight: 700;">
+    <i class="fa-solid fa-plug-circle-plus"></i>
   </h1>
 
-  <h1 style="color:rgb(187, 4, 26); font-weight: 700;">
-   Oooops
+  <h1 style="color:rgb(50, 92, 87); font-weight: 700;">
+   ...
   </h1>
-  <h3 style="color: red;">No results found for this query :</h3>
-  <h4>{{query}}</h4>
-  
+  <h3 style="color: rgb(50, 92, 87);">Coming Soon</h3>
 
 
 
+  <a href="{% url 'tweeter_scrape' %}"> Go to Twitter API sentiment analysis <i class="fa-solid fa-angles-right"></i> </a>
 
 
 

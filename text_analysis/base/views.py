@@ -15,7 +15,8 @@ import requests
 import random
 
 ###__________________Scrape des tweets__________________###
-def home(request):
+
+def tweet(request):
     return render(request, 'index.html')
 
 
@@ -266,3 +267,7 @@ def result(request):
     else :
         return render(request, 'result_with_no_text.html', {'query': query}
                                         )
+
+
+def home(request):
+    return render(request, 'home.html')
