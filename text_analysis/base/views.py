@@ -14,6 +14,9 @@ import json
 import requests
 import random
 
+
+def about(request):
+    return render(request, 'about.html')
 ###__________________Scrape des tweets__________________###
 
 def tweet(request):
