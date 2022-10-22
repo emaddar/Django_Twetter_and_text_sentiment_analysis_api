@@ -18,21 +18,16 @@ import random
 from django.http import HttpResponseRedirect   # For signUp page
 from .forms import SignUp                       # For signUp page
 
-###__________________Scrape des tweets__________________###
+
+from django.contrib.auth.forms import UserCreationForm  # For signUp page Methode 2
+from django.urls import reverse_lazy                    # For signUp page Methode 2
+from django.views import generic                        # For signUp page Methode 2
+
+
+###__________________Sign Up__________________###
 # 127.0.0.1/form
 def signup(request):
-    # if request.method == ('POST'):
-    #     form = SignUp(request.POST)
-
-    #     if form.is_valid():
-    #         return HttpResponseRedirect('/')
-    #     else:
-    #         return HttpResponseRedirect("non") # render(...) whatever you wanted if form validation fails
-         
-      
-    # else:
-    #     form = SignUp()
-        return render(request, 'signup.html', {'signupForm' : SignUp})
+    return render(request, 'signup.html', {'signupForm' : SignUp})
 
 
 ###__________________about page__________________###

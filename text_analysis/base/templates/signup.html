@@ -7,11 +7,16 @@
 
 
 <h1>Signe Up</h1>
-{% csrf_token %}
-
-{{signupForm}}
 
 
+
+
+<form method="post">
+    {% csrf_token %}
+    {{signupForm.as_p}}    
+    <!-- as_p : for "as paragraph" you can use also as_ul -->
+    <button type="submit">Sign Up</button>
+</form>
 
 
 {% endblock content %}
