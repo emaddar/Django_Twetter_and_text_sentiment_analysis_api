@@ -372,3 +372,12 @@ def result(request):
 
 def home(request):
     return render(request, 'home.html')
+
+
+
+def your_text(request):
+    return render(request, 'your_text.html')
+
+def text_result(request):
+    all_words = request.GET['all_words']  
+    return render(request, 'your_text_result.html',{"all_words":all_words})

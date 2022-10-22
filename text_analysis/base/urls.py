@@ -3,7 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import home, tweet, result, about, signup
+from .views import home, tweet, result, about, signup, your_text, text_result
 
 urlpatterns = [
     path('', home, name='home'),
@@ -11,5 +11,7 @@ urlpatterns = [
     path('tweet/result/', result, name='result'),
     path('tweet/result_with_no_text/', result, name='result_with_no_text'),
     path('about/', about, name='about'),
-    path('signup/', signup, name='signup')
+    path('signup/', signup, name='signup'),
+    path('your_text/', your_text, name='your_text'),
+    path('your_text/your_text_result/', text_result, name='your_text_result'),
 ]
