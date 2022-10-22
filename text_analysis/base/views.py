@@ -1,4 +1,4 @@
-# https://www.youtube.com/watch?v=a1j8g01ics4
+
 from email.mime import image
 from django.shortcuts import render
 import snscrape.modules.twitter as sntwitter
@@ -15,6 +15,27 @@ import requests
 import random
 
 
+from django.http import HttpResponseRedirect   # For signUp page
+from .forms import SignUp                       # For signUp page
+
+###__________________Scrape des tweets__________________###
+# 127.0.0.1/form
+def signup(request):
+    # if request.method == ('POST'):
+    #     form = SignUp(request.POST)
+
+    #     if form.is_valid():
+    #         return HttpResponseRedirect('/')
+    #     else:
+    #         return HttpResponseRedirect("non") # render(...) whatever you wanted if form validation fails
+         
+      
+    # else:
+    #     form = SignUp()
+        return render(request, 'signup.html', {'signupForm' : SignUp})
+
+
+###__________________about page__________________###
 def about(request):
     return render(request, 'about.html')
 ###__________________Scrape des tweets__________________###
