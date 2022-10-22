@@ -1,4 +1,5 @@
 
+from cProfile import label
 from email.mime import image
 from django.shortcuts import render
 import snscrape.modules.twitter as sntwitter
@@ -133,6 +134,66 @@ def get_word_cloud(text_only, lang, status):
         fig.tight_layout(pad=0, w_pad=0, h_pad=0)
         fig.savefig('./base/static/base/images/mypic.png')        
 
+#########################################################################
+#                                                                       #
+#                          get API functoin                             #
+#                                                                       #
+#########################################################################
+
+
+def get_api(text_only_limited, lang):
+    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
+    lang = "fr"
+    url ="https://api.edenai.run/v2/text/sentiment_analysis"
+
+    n = len(text_only_limited)
+    if n >= 4000:
+        text_only_limited = text_only_limited[:4000]
+
+    API_status = 1
+    payload={"providers": "amazon", 'language': lang, 'text': text_only_limited}
+    response = requests.post(url, json=payload, headers=headers)
+    result = json.loads(response.text)
+
+    if result['amazon']['status'] == 'fail':
+        for i in range(20):
+            n -= 1000
+            if  n<=0 :
+                API_status = 0
+                break
+            else:
+                text_only_limited = text_only_limited[:n]
+                payload={"providers": "amazon", 'language': lang, 'text': text_only_limited}
+                response = requests.post(url, json=payload, headers=headers)
+                result = json.loads(response.text)
+                if result['amazon']['status'] != 'fail':
+                    API_status = 1
+                    break
+
+    if API_status == 1:
+        x = result['amazon']['items']
+
+    #Création dataframe du résultat de l'API
+        api_dico = {}
+        for i in range(len(x)):
+            api_dico[x[i]['sentiment']] = round(x[i]['sentiment_rate'],4)*100
+
+        api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
+
+    ###__________________Mise en forme du graphique de l'analyse sentimentale__________________###
+        labels = api_df['sentiment'].tolist()
+        data = api_df['sentiment_rate'].tolist()
+
+
+        #Supression sentiment Mixed
+        labels.remove('Mixed')
+        del data[-1]
+
+        return(data, labels, API_status)
+    else:
+        return API_status
+
+
 
 ###__________________Envoyer les résultats vers le template du site__________________###
 
@@ -162,22 +223,20 @@ def result(request):
 
     text_only = df_only_text(df)
     
-
+    All_text = text_only
 
 ###__________________Appel de l'API analyse de sentiments__________________###
-    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
-    lang = "fr"
-    url ="https://api.edenai.run/v2/text/sentiment_analysis"
-    payload={"providers": "amazon", 'language': lang, 'text': text_only}
+#     headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
+#     lang = "fr"
+#     url ="https://api.edenai.run/v2/text/sentiment_analysis"
+#     payload={"providers": "amazon", 'language': lang, 'text': text_only}
 
-
-    All_text = text_only
     
-    # response = requests.post(url, json=payload, headers=headers)
-    # result = json.loads(response.text)
-    # n = len(text_only)
-    # if n >= 4000:
-    #     text_only = text_only[:4000]
+#     response = requests.post(url, json=payload, headers=headers)
+#     result = json.loads(response.text)
+#     n = len(text_only)
+#     if n >= 4000:
+#         text_only = text_only[:4000]
 
 #     if result['amazon']['status'] == 'fail':
 #         for i in range(20):
@@ -206,13 +265,34 @@ def result(request):
 #     labels.remove('Mixed')
 #     del data[-1]
 
+
+
+
+
+
+
+    # x = get_api(text_only, lang)
+    
+    # if len(x) == 3 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 3
+    #     data = x[0]
+    #     labels = x[1]
+
+    #     max_data = max(data)
+    #     max_data_index = data.index(max(data))
+    #     max_labels = labels[max_data_index]
+    # else :
+    #     data = [0, 0, 0]   # This means wa can not do setiment analysis
+    #     labels = ["Positive", "Negative", "Neutral"]
+
+    
     data = [60, 30, 10]
     labels = ["Positive", "Negative", "Neutral"]
-
-
     max_data = max(data)
     max_data_index = data.index(max(data))
     max_labels = labels[max_data_index]
+
+
+
 #Envoi du résultat sur le site
     if text_only != "":
         get_word_cloud(All_text, lang, max_labels)
