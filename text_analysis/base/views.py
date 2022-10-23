@@ -134,7 +134,7 @@ def our_get_stop_words(lang):
     return stop_words
 
 #Fonction pour générer le nuage de mots
-def get_word_cloud(stop_words, text_only, lang, status):
+def get_word_cloud(stop_words, text_only, status):
     mask = np.array(Image.open("../ressources/mask_bird.jpg"))
     mask[mask == 1] = 255
     wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
@@ -275,7 +275,7 @@ def result(request):
 #Envoi du résultat sur le site
     if text_only != "":
         stop_words = our_get_stop_words(lang)
-        get_word_cloud(stop_words, All_text, lang, max_labels)
+        get_word_cloud(stop_words, All_text, max_labels)
 
             #####################################################################
             #                       Get  3 Tweets most liked                    #
@@ -394,7 +394,6 @@ def your_text_result(request):
         text = form.cleaned_data['your_text_field']  # We use this method (instead of GET above) when we use Django's Forms
         text = clean_text(text)  #cleaning the text
         lang = language_detector(text) # detect the language
-        stop_words = our_get_stop_words(lang) #Get stop words with this language
         # x = get_api(text, lang)  # get sentiment analysis
         # if len(x) == 3 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 3
         #     data = x[0]
@@ -416,6 +415,14 @@ def your_text_result(request):
         max_labels = labels[max_data_index]
 
 
-        return render(request, 'your_text_result.html', {"data":data,
-                                                        "labels":labels
+        stop_words = our_get_stop_words(lang) #Get stop words with this language
+        get_word_cloud(stop_words, text, max_labels)
+
+
+        return render(request, 'your_text_result.html', { 
+                                                        'n':len(text),
+                                                        "data":data,
+                                                        "labels":labels,
+                                                        'max_data':round(max_data,2),
+                                                        'max_labels':max_labels
                                                         })
