@@ -1,6 +1,7 @@
 
 from cProfile import label
 from email.mime import image
+import imp
 from django.shortcuts import render
 import snscrape.modules.twitter as sntwitter
 import pandas as pd
@@ -58,13 +59,16 @@ def get_tweets(query, limit):
 
 ###__________________Nettoyage du texte__________________###
 #Supression brouillard du texte
-def df_only_text(df):
-    tweet_text = " ".join(list(df['Tweet']))
-    tweet_text = re.sub(r'http\S+', '', tweet_text)
-    tweet_text = re.sub(r'@\S+', '', tweet_text)
-    tweet_text = re.sub(r'#\S+', '', tweet_text)
-    tweet_text = re.sub('\n+', '', tweet_text)
-    return tweet_text
+def clean_text(x):
+    x = " ".join(list(x))
+    x = re.sub(r'http\S+', '', x)     # Remove URL
+    x = re.sub(r'@\S+', '', x)        # Remove mentions
+    x = re.sub(r'#\S+', '', x)        # Remove Hashtags
+    x = re.sub('\n+', '', x)
+    x = re.sub("\'\w+", '', x)                 # Remove ticks and the next character
+    x = re.sub(r'\w*\d+\w*', '', x)     # Remove numbers
+    x = re.sub('\s{2,}', " ", x)        # Replace the over spaces
+    return x
 
 #Création d'un texte unique pour l'analyse
 def getQuery(searsh_query):
@@ -104,9 +108,7 @@ def couleur_blue(*args, **kwargs):
     return "rgb({}, 0, 255)".format(random.randint(0, 170))
 
 
-
-#Fonction pour générer le nuage de mots
-def get_word_cloud(text_only, lang, status):
+def our_get_stop_words(lang):
     stop_words = get_stop_words(lang) #Nettoyage des appax, possible d'en ajouter à la
     if lang == "fr":
         ma_list_fr = ["bcp", "Bcp", "trkl", "c'est", "est","s'en","j'ai","etc", "ça", "n'a","n'as","ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","qu'il","qu'elle","vs","bcp","mdr", "d'un", "d'une", "s'il", "s'ils", "ya", "n'est"]
@@ -118,6 +120,10 @@ def get_word_cloud(text_only, lang, status):
         for mot in ma_list_en:
              if mot not in stop_words:
                  stop_words.append(mot)
+    return stop_words
+
+#Fonction pour générer le nuage de mots
+def get_word_cloud(stop_words, text_only, lang, status):
     mask = np.array(Image.open("../ressources/mask_bird.jpg"))
     mask[mask == 1] = 255
     wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
@@ -195,6 +201,8 @@ def get_api(text_only_limited, lang):
 
 
 
+
+
 ###__________________Envoyer les résultats vers le template du site__________________###
 
 def result(request):
@@ -221,49 +229,9 @@ def result(request):
 
 
 
-    text_only = df_only_text(df)
+    text_only = clean_text(df['Tweet'])
     
     All_text = text_only
-
-###__________________Appel de l'API analyse de sentiments__________________###
-#     headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
-#     lang = "fr"
-#     url ="https://api.edenai.run/v2/text/sentiment_analysis"
-#     payload={"providers": "amazon", 'language': lang, 'text': text_only}
-
-    
-#     response = requests.post(url, json=payload, headers=headers)
-#     result = json.loads(response.text)
-#     n = len(text_only)
-#     if n >= 4000:
-#         text_only = text_only[:4000]
-
-#     if result['amazon']['status'] == 'fail':
-#         for i in range(20):
-#             n -= 1000
-#             text_only = text_only[:n]
-#             payload={"providers": "amazon", 'language': lang, 'text': text_only}
-#             response = requests.post(url, json=payload, headers=headers)
-#             result = json.loads(response.text)
-#             if result['amazon']['status'] != 'fail':
-#                 break
-#     x = result['amazon']['items']
-
-# #Création dataframe du résultat de l'API
-#     api_dico = {}
-#     for i in range(len(x)):
-#         api_dico[x[i]['sentiment']] = round(x[i]['sentiment_rate'],4)*100
-
-#     api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
-
-# ###__________________Mise en forme du graphique de l'analyse sentimentale__________________###
-#     labels = api_df['sentiment'].tolist()
-#     data = api_df['sentiment_rate'].tolist()
-
-
-#     #Supression sentiment Mixed
-#     labels.remove('Mixed')
-#     del data[-1]
 
 
 
@@ -295,7 +263,8 @@ def result(request):
 
 #Envoi du résultat sur le site
     if text_only != "":
-        get_word_cloud(All_text, lang, max_labels)
+        stop_words = our_get_stop_words(lang)
+        get_word_cloud(stop_words, All_text, lang, max_labels)
 
             #####################################################################
             #                       Get  3 Tweets most liked                    #
@@ -397,10 +366,20 @@ def home(request):
 
 
 
+from .forms import YourTextForm                       # For Your Text Analysis
+from django.views.generic import TemplateView
+from django.shortcuts import render
+
+
 
 def your_text(request):
-    return render(request, 'your_text.html')
+    return render(request, 'your_text.html', {'YourTextForm' : YourTextForm})
 
-def text_result(request):
-    all_words = request.GET['all_words']  
-    return render(request, 'your_text_result.html',{"all_words":all_words})
+def your_text_result(request):
+    form = YourTextForm(request.POST)
+    if form.is_valid():
+        # your_text_field = request.GET['your_text_field']
+        text = form.cleaned_data['your_text_field']  
+
+
+        return render(request, 'your_text_result.html', {"text":text})

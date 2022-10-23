@@ -11,4 +11,4 @@ class SignUp(forms.Form):
 #https://docs.djangoproject.com/fr/2.2/topics/forms/
 
 class YourTextForm(forms.Form):
-    your_text_field = forms.CharField(widget=forms.Textarea)
+    your_text_field = forms.CharField(widget=forms.Textarea, required=True)

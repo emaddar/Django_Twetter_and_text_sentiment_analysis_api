@@ -110,66 +110,81 @@ text_only_limited = "  Françaises, Français,  Mes chers compatriotes de métro
 # print(get_api(text_only_limited, "fr"))
 
 
-from pickle import TRUE
-import requests
-import json
-import pandas as pd
-
-
-def get_api(text_only_limited, lang):
-    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
-    lang = "fr"
-    url ="https://api.edenai.run/v2/text/sentiment_analysis"
 
 
 
 
-    n = len(text_only_limited)
-    if n >= 4000:
-        text_only_limited = text_only_limited[:4000]
-
-    API_status = 1
-    payload={"providers": "amazon", 'language': lang, 'text': text_only_limited}
-    response = requests.post(url, json=payload, headers=headers)
-    result = json.loads(response.text)
-
-    if result['amazon']['status'] == 'fail':
-        for i in range(20):
-            n -= 1000
-            if  n<=0 :
-                API_status = 0
-                break
-            else:
-                text_only_limited = text_only_limited[:n]
-                payload={"providers": "amazon", 'language': lang, 'text': text_only_limited}
-                response = requests.post(url, json=payload, headers=headers)
-                result = json.loads(response.text)
-                if result['amazon']['status'] != 'fail':
-                    API_status = 1
-                    break
-
-    if API_status == 1:
-        x = result['amazon']['items']
-
-    #Création dataframe du résultat de l'API
-        api_dico = {}
-        for i in range(len(x)):
-            api_dico[x[i]['sentiment']] = round(x[i]['sentiment_rate'],4)*100
-
-        api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
-
-    ###__________________Mise en forme du graphique de l'analyse sentimentale__________________###
-        labels = api_df['sentiment'].tolist()
-        data = api_df['sentiment_rate'].tolist()
 
 
-        #Supression sentiment Mixed
-        labels.remove('Mixed')
-        del data[-1]
 
-        return(data, labels, API_status)
-    else:
-        return API_status
+###__________________Appel de l'API analyse de sentiments__________________###
+#     headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
+#     lang = "fr"
+#     url ="https://api.edenai.run/v2/text/sentiment_analysis"
+#     payload={"providers": "amazon", 'language': lang, 'text': text_only}
 
-print(len(get_api(text_only_limited, "fr")))
     
+#     response = requests.post(url, json=payload, headers=headers)
+#     result = json.loads(response.text)
+#     n = len(text_only)
+#     if n >= 4000:
+#         text_only = text_only[:4000]
+
+#     if result['amazon']['status'] == 'fail':
+#         for i in range(20):
+#             n -= 1000
+#             text_only = text_only[:n]
+#             payload={"providers": "amazon", 'language': lang, 'text': text_only}
+#             response = requests.post(url, json=payload, headers=headers)
+#             result = json.loads(response.text)
+#             if result['amazon']['status'] != 'fail':
+#                 break
+#     x = result['amazon']['items']
+
+# #Création dataframe du résultat de l'API
+#     api_dico = {}
+#     for i in range(len(x)):
+#         api_dico[x[i]['sentiment']] = round(x[i]['sentiment_rate'],4)*100
+
+#     api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
+
+# ###__________________Mise en forme du graphique de l'analyse sentimentale__________________###
+#     labels = api_df['sentiment'].tolist()
+#     data = api_df['sentiment_rate'].tolist()
+
+
+#     #Supression sentiment Mixed
+#     labels.remove('Mixed')
+#     del data[-1]
+
+
+
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import re
+import nltk
+import string
+from nltk.corpus import stopwords
+# nltk.download()
+
+stop_words = stopwords.words("french")
+print(stop_words)
+
+def text_preproc(x):
+  x = x.lower()
+  x = ' '.join([word for word in x.split(' ') if word not in stop_words])
+  x = x.encode('ascii', 'ignore').decode()
+  x = re.sub(r'https*\S+', ' ', x)
+  x = re.sub(r'@\S+', ' ', x)
+  x = re.sub(r'#\S+', ' ', x)
+  x = re.sub(r'\'\w+', '', x)
+  x = re.sub('[%s]' % re.escape(string.punctuation), ' ', x)
+  x = re.sub(r'\w*\d+\w*', '', x)
+  x = re.sub(r'\s{2,}', ' ', x)
+  return x
+

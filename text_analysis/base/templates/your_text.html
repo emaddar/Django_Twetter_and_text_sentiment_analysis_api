@@ -1,32 +1,17 @@
+{% extends 'base.html' %}
 
+{% load static %}
 
-    {% extends 'base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
 
-    {% load static %}
-    
-    {% block content %}
-    
-    <main>
-      
+<h1>Your text</h1>
 
-      <form action="your_text_result">
-        {% csrf_token %}
-        <div class="row g-2">
-    
-          <!-- all_words -->
-            <div class="col-md">
-              <div class="form-floating">
-                <input type="text" class="form-control" id="floatingInputGrid" placeholder="Your Text here" name="all_words" required>
-                <!-- <label for="floatingInputGrid">Email address</label> -->
-              </div>
-            </div>
-        
-    
-        <input class="btn btn-primary btn-lg btn-block" type="submit" value='Text Analysis'>
-    
-      </form>
-    
-    
-    </main>
-    
-    {% endblock content %}
+<form action="your_text_result" method="post">
+  {% csrf_token %}
+  {{ YourTextForm | crispy}}
+  <input class="btn btn-primary" type="submit" value="Submit">
+</form>
+{{text}}
+
+{% endblock content %}
