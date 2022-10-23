@@ -25,6 +25,8 @@ from django.contrib.auth.forms import UserCreationForm  # For signUp page Method
 from django.urls import reverse_lazy                    # For signUp page Methode 2
 from django.views import generic                        # For signUp page Methode 2
 
+import langid  #for language detect
+
 
 ###__________________Sign Up__________________###
 # 127.0.0.1/form
@@ -39,6 +41,16 @@ def about(request):
 
 def tweet(request):
     return render(request, 'index.html')
+
+
+
+#########################################################################
+#                          language detector                            #
+#########################################################################
+def language_detector(text):
+    return langid.classify(text)[0]
+
+
 
 
 def join_with(mylist, operator):
@@ -60,7 +72,6 @@ def get_tweets(query, limit):
 ###__________________Nettoyage du texte__________________###
 #Supression brouillard du texte
 def clean_text(x):
-    x = " ".join(list(x))
     x = re.sub(r'http\S+', '', x)     # Remove URL
     x = re.sub(r'@\S+', '', x)        # Remove mentions
     x = re.sub(r'#\S+', '', x)        # Remove Hashtags
@@ -228,8 +239,8 @@ def result(request):
     df = df.sort_values(['Like', 'Retweet','Replay'],ascending=False)
 
 
-
-    text_only = clean_text(df['Tweet'])
+    x = " ".join(list(df['Tweet']))
+    text_only = clean_text(x)
     
     All_text = text_only
 
@@ -375,11 +386,36 @@ from django.shortcuts import render
 def your_text(request):
     return render(request, 'your_text.html', {'YourTextForm' : YourTextForm})
 
+
 def your_text_result(request):
     form = YourTextForm(request.POST)
     if form.is_valid():
         # your_text_field = request.GET['your_text_field']
-        text = form.cleaned_data['your_text_field']  
+        text = form.cleaned_data['your_text_field']  # We use this method (instead of GET above) when we use Django's Forms
+        text = clean_text(text)  #cleaning the text
+        lang = language_detector(text) # detect the language
+        stop_words = our_get_stop_words(lang) #Get stop words with this language
+        # x = get_api(text, lang)  # get sentiment analysis
+        # if len(x) == 3 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 3
+        #     data = x[0]
+        #     labels = x[1]
+
+        #     max_data = max(data)
+        #     max_data_index = data.index(max(data))
+        #     max_labels = labels[max_data_index]
+        # else :
+        #     data = [0, 0, 0]   # This means wa can not do setiment analysis
+        #     labels = ["Positive", "Negative", "Neutral"]
 
 
-        return render(request, 'your_text_result.html', {"text":text})
+
+        data = [60, 30, 10]
+        labels = ["Positive", "Negative", "Neutral"]
+        max_data = max(data)
+        max_data_index = data.index(max(data))
+        max_labels = labels[max_data_index]
+
+
+        return render(request, 'your_text_result.html', {"data":data,
+                                                        "labels":labels
+                                                        })

@@ -170,4 +170,4 @@ def language_detector(text):
 
 
 x = "Hello"
-print(language_detector(x))
+print(language_detector(text_only_limited))
