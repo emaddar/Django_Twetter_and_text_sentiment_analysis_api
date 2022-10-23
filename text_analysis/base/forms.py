@@ -8,5 +8,7 @@ class SignUp(forms.Form):
     botcatcher = forms.CharField(required=False, widget=forms.HiddenInput, validators=[validators.MaxLengthValidator(0)])
 
 
+#https://docs.djangoproject.com/fr/2.2/topics/forms/
+
 class YourTextForm(forms.Form):
     your_text_field = forms.CharField(widget=forms.Textarea)
