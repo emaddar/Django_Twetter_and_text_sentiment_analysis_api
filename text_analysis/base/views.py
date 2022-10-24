@@ -174,14 +174,15 @@ def get_from_to_date_k_days_ago(df,k):
     to_date = df_date_sorted_time_type.iloc[-1]['Date']
 
     from_date_1_year_ago = (pd.to_datetime(from_date.strftime('%Y-%m-%d')) - timedelta(days=k)).strftime('%Y-%m-%d')
-    to_date_1_year_ago = (pd.to_datetime(to_date.strftime('%Y-%m-%d')) - timedelta(days=k)).strftime('%Y-%m-%d')
+    to_date_1_year_ago = (pd.to_datetime(to_date.strftime('%Y-%m-%d')) - timedelta(days=k-1)).strftime('%Y-%m-%d')
+
 
     return (from_date_1_year_ago, to_date_1_year_ago)
       
 
 #########################################################################
 #                                                                       #
-#                          get API functoin                             #
+#                          get API function                             #
 #                                                                       #
 #########################################################################
 
@@ -280,39 +281,63 @@ def result(request):
 ###__________________API______________________________###
 
 
-    # x = get_api(text_only, lang)
+    x = get_api(text_only, lang)
     
-    # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
-    #     data = x[0]
-    #     labels = x[1]
-    #     n = x[2]
+    if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+        data = x[0]
+        labels = x[1]
+        n = x[2]
 
-    #     max_data = max(data)
-    #     max_data_index = data.index(max(data))
-    #     max_labels = labels[max_data_index]
-    # else :
-    #     data = [0, 0, 0]   # This means wa can not do setiment analysis
-    #     labels = ["Positive", "Negative", "Neutral"]
+        max_data = max(data)
+        max_data_index = data.index(max(data))
+        max_labels = labels[max_data_index]
+    else :
+        data = [0, 0, 0]   # This means wa can not do setiment analysis
+        labels = ["Positive", "Negative", "Neutral"]
 
     
-    data = [60, 30, 10]
-    labels = ["Positive", "Negative", "Neutral"]
-    max_data = max(data)
-    max_data_index = data.index(max(data))
-    max_labels = labels[max_data_index]
-    n = 4000
+    # data = [60, 30, 10]
+    # labels = ["Positive", "Negative", "Neutral"]
+    # max_data = max(data)
+    # max_data_index = data.index(max(data))
+    # max_labels = labels[max_data_index]
+    # n = 4000
 
 
 
 
 #################################################  365 days ago
-    from_date_1_year_ago = str(get_from_to_date_k_days_ago(df,365)[0])
-    to_date_1_year_ago = str(get_from_to_date_k_days_ago(df,365)[1])
+    from_to_365_days_ago = get_from_to_date_k_days_ago(df,365)
+    from_date_1_year_ago = str(from_to_365_days_ago[0])
+    to_date_1_year_ago = str(from_to_365_days_ago[1])
     query = re.sub(r'until:\S+', 'until:'+to_date_1_year_ago, query)     # Remove URL
     query = re.sub(r'since:\S+', 'since:'+from_date_1_year_ago, query)        # Remove mentions
 
     df_365_days_ago = get_tweets(query, int(limit))
     df_365_days_ago = df_365_days_ago.sort_values(['Like', 'Retweet','Replay'],ascending=False)
+
+    x_365_days_ago = " ".join(list(df_365_days_ago['Tweet']))
+    text_only_365_days_ago = clean_text(x_365_days_ago)
+
+
+###__________________ API 365_days_ago ______________________________###
+
+    api_365_days_ago = get_api(text_only_365_days_ago, lang)
+    
+    # if len(api_365_days_ago) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+    #     data_365_days_ago = api_365_days_ago[0]
+    #     labels_365_days_ago = api_365_days_ago[1]
+    #     n_365_days_ago = api_365_days_ago[2]
+
+    #     max_data_365_days_ago = max(api_365_days_ago)
+    #     max_data_index_365_days_ago = data.index(max(data_365_days_ago))
+    #     max_labels_365_days_ago = labels[max_data_index_365_days_ago]
+    # else :
+    #     data_365_days_ago = [0, 0, 0]   # This means wa can not do setiment analysis
+    #     labels_365_days_ago = ["Positive", "Negative", "Neutral"]
+
+
+
 
 #Envoi du résultat sur le site
     if text_only != "":
@@ -385,7 +410,9 @@ def result(request):
                                          "tweet_1_Url" : tweet_1_Url,
                                          "tweet_2_Url" : tweet_2_Url,
                                          "tweet_3_Url" : tweet_3_Url,
-                                        "df_365_days_ago":df_365_days_ago
+                                        "df_365_days_ago":df_365_days_ago.to_html,
+                                        "from_to_365_days_ago":from_to_365_days_ago,
+                                        "api_365_days_ago":api_365_days_ago
                                          }
                                         )
     else :
