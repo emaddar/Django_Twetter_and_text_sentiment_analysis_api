@@ -81,31 +81,41 @@ def clean_text(x):
     x = re.sub('\s{2,}', " ", x)        # Replace the over spaces
     return x
 
+
+
+def text_without_stop_words(text,stopwords):
+    for i in (text.split()):
+        if i in stopwords:
+            text = text.replace(i, '')
+    return text
+
+
+
 #Création d'un texte unique pour l'analyse
 def getQuery(searsh_query):
-    query = searsh_query[0] + " lang:" + searsh_query[13] + " " 
+    query = searsh_query[0] + " lang:" + searsh_query[10] + " " 
     if searsh_query[2] != "":
         query += '"' + searsh_query[2] + '"' + " "
-    if searsh_query[4] != "":
-        query +=  ' '.join(['-'+i for i in searsh_query[4].split()]) + " "
     if searsh_query[3] != "":
-        query += '(' + join_with(searsh_query[3].split(), 'OR') + ')'  + " "
+        query +=  ' '.join(['-'+i for i in searsh_query[3].split()]) + " "
+    # if searsh_query[3] != "":
+    #     query += '(' + join_with(searsh_query[3].split(), 'OR') + ')'  + " "
+    if searsh_query[4] != "":
+        query += '(' + join_with(searsh_query[4].split(), 'OR') + ')'  + " "
     if searsh_query[5] != "":
-        query += '(' + join_with(searsh_query[5].split(), 'OR') + ')'  + " "
+        query += '(from:' + join_with(searsh_query[5].split(), 'OR from:') + ')'  + " "
     if searsh_query[6] != "":
-        query += '(from:' + join_with(searsh_query[6].split(), 'OR from:') + ')'  + " "
-    if searsh_query[7] != "":
-        query += '(to:' + join_with(searsh_query[7].split(), 'OR to:') + ')'  + " "
+        query += '(to:' + join_with(searsh_query[6].split(), 'OR to:') + ')'  + " "
+    # if searsh_query[7] != "" :
+    #     query += 'min_replies:' + searsh_query[7] + " "
+    if searsh_query[7] != "" :
+        query += 'min_faves:' + searsh_query[7] + " "
+    # if searsh_query[8] != "" :
+    #     query += 'min_retweets:' + searsh_query[8] + " "
     if searsh_query[8] != "" :
-        query += 'min_replies:' + searsh_query[8] + " "
+        query += 'since:' + searsh_query[8] + " "
     if searsh_query[9] != "" :
-        query += 'min_faves:' + searsh_query[9] + " "
-    if searsh_query[10] != "" :
-        query += 'min_retweets:' + searsh_query[10] + " "
-    if searsh_query[11] != "" :
-        query += 'since:' + searsh_query[11] + " "
-    if searsh_query[12] != "" :
-        query += 'until:' + searsh_query[12] + " "
+        query += 'until:' + searsh_query[9] + " "
 
     return query
 
@@ -166,6 +176,7 @@ def get_api(text_only_limited, lang):
     n = len(text_only_limited)
     if n >= 4000:
         text_only_limited = text_only_limited[:4000]
+        n = len(text_only_limited)
 
     API_status = 1
     payload={"providers": "amazon", 'language': lang, 'text': text_only_limited}
@@ -206,7 +217,7 @@ def get_api(text_only_limited, lang):
         labels.remove('Mixed')
         del data[-1]
 
-        return(data, labels, API_status)
+        return(data, labels, n, API_status)
     else:
         return API_status
 
@@ -220,21 +231,21 @@ def result(request):
     all_words = request.GET['all_words']                       #0
     limit = request.GET['limit']                               #1
     exact_phrase = request.GET['exact_phrase']                 #2
-    Any_of_these_words = request.GET['Any_of_these_words']     #3
-    None_of_these_words = request.GET['None_of_these_words']   #4
-    These_hastags = request.GET['These_hastags']               #5
-    From_acounts = request.GET['From_acounts']                 #6
-    To_acounts = request.GET['To_acounts']                     #7
-    Minimun_replies = request.GET['Minimun_replies']           #8
-    Minimum_likes = request.GET['Minimum_likes']               #9
-    Minimum_retweets = request.GET['Minimum_retweets']         #10
-    from_date = request.GET['from_date']                       #11
-    to_date = request.GET['to_date']                           #12
-    lang = request.GET['lang']                                 #13
+    # Any_of_these_words = request.GET['Any_of_these_words']   #
+    None_of_these_words = request.GET['None_of_these_words']   #3
+    These_hastags = request.GET['These_hastags']               #4
+    From_acounts = request.GET['From_acounts']                 #5
+    To_acounts = request.GET['To_acounts']                     #6
+    # Minimun_replies = request.GET['Minimun_replies']         #
+    Minimum_likes = request.GET['Minimum_likes']               #7
+    # Minimum_retweets = request.GET['Minimum_retweets']       #
+    from_date = request.GET['from_date']                       #8
+    to_date = request.GET['to_date']                           #9
+    lang = request.GET['lang']                                 #10
     
-    query = getQuery(searsh_query = [all_words, limit, exact_phrase, Any_of_these_words, None_of_these_words,
-                                            These_hastags, From_acounts, To_acounts, Minimun_replies, Minimum_likes,
-                                            Minimum_retweets, from_date, to_date, lang])
+    query = getQuery(searsh_query = [all_words, limit, exact_phrase, None_of_these_words,
+                                            These_hastags, From_acounts, To_acounts, Minimum_likes,
+                                            from_date, to_date, lang])
     df = get_tweets(query, int(limit))
     df = df.sort_values(['Like', 'Retweet','Replay'],ascending=False)
 
@@ -252,9 +263,10 @@ def result(request):
 
     # x = get_api(text_only, lang)
     
-    # if len(x) == 3 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 3
+    # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
     #     data = x[0]
     #     labels = x[1]
+    #     n = x[2]
 
     #     max_data = max(data)
     #     max_data_index = data.index(max(data))
@@ -269,6 +281,7 @@ def result(request):
     max_data = max(data)
     max_data_index = data.index(max(data))
     max_labels = labels[max_data_index]
+    n = 4000
 
 
 
@@ -317,7 +330,7 @@ def result(request):
                                          'df' : df[:3].to_html(),
                                          'text_only' : text_only,
                                         #  'api_df' : api_df.to_html,
-                                         'n':len(text_only),
+                                         'n':n,
                                          'labels':labels,
                                          'data':data,
                                          'max_data':round(max_data,2),
@@ -394,10 +407,13 @@ def your_text_result(request):
         text = form.cleaned_data['your_text_field']  # We use this method (instead of GET above) when we use Django's Forms
         text = clean_text(text)  #cleaning the text
         lang = language_detector(text) # detect the language
+
+
         # x = get_api(text, lang)  # get sentiment analysis
-        # if len(x) == 3 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 3
+        # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
         #     data = x[0]
         #     labels = x[1]
+        #     n = x[2]
 
         #     max_data = max(data)
         #     max_data_index = data.index(max(data))
@@ -415,14 +431,19 @@ def your_text_result(request):
         max_labels = labels[max_data_index]
 
 
-        stop_words = our_get_stop_words(lang) #Get stop words with this language
-        get_word_cloud(stop_words, text, max_labels)
+        stoplist = our_get_stop_words(lang)
+        is_without_stop_words = text_without_stop_words(text,stoplist)
+        if re.search('[a-zA-Z]', is_without_stop_words) != None:       # check if is_without_stop_words containes any letter from a to Z or from A to Z
+            stop_words = our_get_stop_words(lang) #Get stop words with this language
+            get_word_cloud(stop_words, text, max_labels)
+        else : 
+            return render(request, 'result_with_no_text.html', {'query': text})
 
 
         return render(request, 'your_text_result.html', { 
-                                                        'n':len(text),
-                                                        "data":data,
-                                                        "labels":labels,
-                                                        'max_data':round(max_data,2),
-                                                        'max_labels':max_labels
-                                                        })
+                                                            'n':n,
+                                                            "data":data,
+                                                            "labels":labels,
+                                                            'max_data':round(max_data,2),
+                                                            'max_labels':max_labels
+                                                            })
