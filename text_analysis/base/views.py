@@ -261,26 +261,26 @@ def result(request):
 
 
 
-    x = get_api(text_only, lang)
+    # x = get_api(text_only, lang)
     
-    if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
-        data = x[0]
-        labels = x[1]
-        n = x[2]
+    # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+    #     data = x[0]
+    #     labels = x[1]
+    #     n = x[2]
 
-        max_data = max(data)
-        max_data_index = data.index(max(data))
-        max_labels = labels[max_data_index]
-    else :
-        data = [0, 0, 0]   # This means wa can not do setiment analysis
-        labels = ["Positive", "Negative", "Neutral"]
+    #     max_data = max(data)
+    #     max_data_index = data.index(max(data))
+    #     max_labels = labels[max_data_index]
+    # else :
+    #     data = [0, 0, 0]   # This means wa can not do setiment analysis
+    #     labels = ["Positive", "Negative", "Neutral"]
 
     
-    # data = [60, 30, 10]
-    # labels = ["Positive", "Negative", "Neutral"]
-    # max_data = max(data)
-    # max_data_index = data.index(max(data))
-    # max_labels = labels[max_data_index]
+    data = [60, 30, 10]
+    labels = ["Positive", "Negative", "Neutral"]
+    max_data = max(data)
+    max_data_index = data.index(max(data))
+    max_labels = labels[max_data_index]
 
 
 
@@ -408,26 +408,26 @@ def your_text_result(request):
         lang = language_detector(text) # detect the language
 
 
-        x = get_api(text, lang)  # get sentiment analysis
-        if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
-            data = x[0]
-            labels = x[1]
-            n = x[2]
+        # x = get_api(text, lang)  # get sentiment analysis
+        # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+        #     data = x[0]
+        #     labels = x[1]
+        #     n = x[2]
 
-            max_data = max(data)
-            max_data_index = data.index(max(data))
-            max_labels = labels[max_data_index]
-        else :
-            data = [0, 0, 0]   # This means wa can not do setiment analysis
-            labels = ["Positive", "Negative", "Neutral"]
+        #     max_data = max(data)
+        #     max_data_index = data.index(max(data))
+        #     max_labels = labels[max_data_index]
+        # else :
+        #     data = [0, 0, 0]   # This means wa can not do setiment analysis
+        #     labels = ["Positive", "Negative", "Neutral"]
 
 
 
-        # data = [60, 30, 10]
-        # labels = ["Positive", "Negative", "Neutral"]
-        # max_data = max(data)
-        # max_data_index = data.index(max(data))
-        # max_labels = labels[max_data_index]
+        data = [60, 30, 10]
+        labels = ["Positive", "Negative", "Neutral"]
+        max_data = max(data)
+        max_data_index = data.index(max(data))
+        max_labels = labels[max_data_index]
 
 
         stoplist = our_get_stop_words(lang)
