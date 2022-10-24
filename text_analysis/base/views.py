@@ -15,7 +15,7 @@ from PIL import Image
 import json
 import requests
 import random
-
+from datetime import datetime, timedelta
 
 from django.http import HttpResponseRedirect   # For signUp page
 from .forms import SignUp                       # For signUp page
@@ -129,6 +129,7 @@ def couleur_blue(*args, **kwargs):
     return "rgb({}, 0, 255)".format(random.randint(0, 170))
 
 
+
 def our_get_stop_words(lang):
     stop_words = get_stop_words(lang) #Nettoyage des appax, possible d'en ajouter à la
     if lang == "fr":
@@ -149,17 +150,34 @@ def get_word_cloud(stop_words, text_only, status):
     mask[mask == 1] = 255
     wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
     if status == "Positive" or status == "Neutral":
-        fig = plt.figure(figsize=(20,16) , dpi=200) 
+        fig = plt.figure(figsize=(30,30) , dpi=200) 
         plt.imshow(wordcloud.recolor(color_func = couleur_blue))
         plt.axis("off")
         fig.tight_layout(pad=0, w_pad=0, h_pad=0)
         fig.savefig('./base/static/base/images/mypic.png') 
     else : 
-        fig = plt.figure(figsize=(20,16) , dpi=200) 
+        fig = plt.figure(figsize=(30,30) , dpi=200) 
         plt.imshow(wordcloud.recolor(color_func = couleur_red))
         plt.axis("off")
         fig.tight_layout(pad=0, w_pad=0, h_pad=0)
-        fig.savefig('./base/static/base/images/mypic.png')        
+        fig.savefig('./base/static/base/images/mypic.png')  
+
+#########################################################################
+#                          get from date to date ... k days ago         #
+#########################################################################
+
+def get_from_to_date_k_days_ago(df,k):
+    df_date_sorted = df.sort_values(by='Date')
+    df_date_sorted_time_type = df_date_sorted 
+    
+    from_date = df_date_sorted_time_type.iloc[0]['Date']
+    to_date = df_date_sorted_time_type.iloc[-1]['Date']
+
+    from_date_1_year_ago = (pd.to_datetime(from_date.strftime('%Y-%m-%d')) - timedelta(days=k)).strftime('%Y-%m-%d')
+    to_date_1_year_ago = (pd.to_datetime(to_date.strftime('%Y-%m-%d')) - timedelta(days=k)).strftime('%Y-%m-%d')
+
+    return (from_date_1_year_ago, to_date_1_year_ago)
+      
 
 #########################################################################
 #                                                                       #
@@ -250,6 +268,7 @@ def result(request):
     df = df.sort_values(['Like', 'Retweet','Replay'],ascending=False)
 
 
+
     x = " ".join(list(df['Tweet']))
     text_only = clean_text(x)
     
@@ -284,6 +303,16 @@ def result(request):
     n = 4000
 
 
+
+
+#################################################  365 days ago
+    from_date_1_year_ago = str(get_from_to_date_k_days_ago(df,365)[0])
+    to_date_1_year_ago = str(get_from_to_date_k_days_ago(df,365)[1])
+    query = re.sub(r'until:\S+', 'until:'+to_date_1_year_ago, query)     # Remove URL
+    query = re.sub(r'since:\S+', 'since:'+from_date_1_year_ago, query)        # Remove mentions
+
+    df_365_days_ago = get_tweets(query, int(limit))
+    df_365_days_ago = df_365_days_ago.sort_values(['Like', 'Retweet','Replay'],ascending=False)
 
 #Envoi du résultat sur le site
     if text_only != "":
@@ -356,6 +385,7 @@ def result(request):
                                          "tweet_1_Url" : tweet_1_Url,
                                          "tweet_2_Url" : tweet_2_Url,
                                          "tweet_3_Url" : tweet_3_Url,
+                                        "df_365_days_ago":df_365_days_ago
                                          }
                                         )
     else :
@@ -429,6 +459,7 @@ def your_text_result(request):
         max_data = max(data)
         max_data_index = data.index(max(data))
         max_labels = labels[max_data_index]
+        n = 4000
 
 
         stoplist = our_get_stop_words(lang)
