@@ -166,6 +166,7 @@ def get_api(text_only_limited, lang):
     n = len(text_only_limited)
     if n >= 4000:
         text_only_limited = text_only_limited[:4000]
+        n = len(text_only_limited)
 
     API_status = 1
     payload={"providers": "amazon", 'language': lang, 'text': text_only_limited}
@@ -206,7 +207,7 @@ def get_api(text_only_limited, lang):
         labels.remove('Mixed')
         del data[-1]
 
-        return(data, labels, API_status)
+        return(data, labels, n, API_status)
     else:
         return API_status
 
@@ -250,25 +251,26 @@ def result(request):
 
 
 
-    # x = get_api(text_only, lang)
+    x = get_api(text_only, lang)
     
-    # if len(x) == 3 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 3
-    #     data = x[0]
-    #     labels = x[1]
+    if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+        data = x[0]
+        labels = x[1]
+        n = x[2]
 
-    #     max_data = max(data)
-    #     max_data_index = data.index(max(data))
-    #     max_labels = labels[max_data_index]
-    # else :
-    #     data = [0, 0, 0]   # This means wa can not do setiment analysis
-    #     labels = ["Positive", "Negative", "Neutral"]
+        max_data = max(data)
+        max_data_index = data.index(max(data))
+        max_labels = labels[max_data_index]
+    else :
+        data = [0, 0, 0]   # This means wa can not do setiment analysis
+        labels = ["Positive", "Negative", "Neutral"]
 
     
-    data = [60, 30, 10]
-    labels = ["Positive", "Negative", "Neutral"]
-    max_data = max(data)
-    max_data_index = data.index(max(data))
-    max_labels = labels[max_data_index]
+    # data = [60, 30, 10]
+    # labels = ["Positive", "Negative", "Neutral"]
+    # max_data = max(data)
+    # max_data_index = data.index(max(data))
+    # max_labels = labels[max_data_index]
 
 
 
@@ -317,7 +319,7 @@ def result(request):
                                          'df' : df[:3].to_html(),
                                          'text_only' : text_only,
                                         #  'api_df' : api_df.to_html,
-                                         'n':len(text_only),
+                                         'n':n,
                                          'labels':labels,
                                          'data':data,
                                          'max_data':round(max_data,2),
@@ -394,25 +396,28 @@ def your_text_result(request):
         text = form.cleaned_data['your_text_field']  # We use this method (instead of GET above) when we use Django's Forms
         text = clean_text(text)  #cleaning the text
         lang = language_detector(text) # detect the language
-        # x = get_api(text, lang)  # get sentiment analysis
-        # if len(x) == 3 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 3
-        #     data = x[0]
-        #     labels = x[1]
-
-        #     max_data = max(data)
-        #     max_data_index = data.index(max(data))
-        #     max_labels = labels[max_data_index]
-        # else :
-        #     data = [0, 0, 0]   # This means wa can not do setiment analysis
-        #     labels = ["Positive", "Negative", "Neutral"]
 
 
+        x = get_api(text, lang)  # get sentiment analysis
+        if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+            data = x[0]
+            labels = x[1]
+            n = x[2]
 
-        data = [60, 30, 10]
-        labels = ["Positive", "Negative", "Neutral"]
-        max_data = max(data)
-        max_data_index = data.index(max(data))
-        max_labels = labels[max_data_index]
+            max_data = max(data)
+            max_data_index = data.index(max(data))
+            max_labels = labels[max_data_index]
+        else :
+            data = [0, 0, 0]   # This means wa can not do setiment analysis
+            labels = ["Positive", "Negative", "Neutral"]
+
+
+
+        # data = [60, 30, 10]
+        # labels = ["Positive", "Negative", "Neutral"]
+        # max_data = max(data)
+        # max_data_index = data.index(max(data))
+        # max_labels = labels[max_data_index]
 
 
         stop_words = our_get_stop_words(lang) #Get stop words with this language
@@ -420,7 +425,7 @@ def your_text_result(request):
 
 
         return render(request, 'your_text_result.html', { 
-                                                        'n':len(text),
+                                                        'n':n,
                                                         "data":data,
                                                         "labels":labels,
                                                         'max_data':round(max_data,2),

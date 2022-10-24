@@ -164,10 +164,13 @@ text_only_limited = "  Françaises, Français,  Mes chers compatriotes de métro
 #                          language detector                            #
 #########################################################################
 
-import langid  #for language detect
-def language_detector(text):
-    return langid.classify(text)[0]
+# import langid  #for language detect
+# def language_detector(text):
+#     return langid.classify(text)[0]
 
 
-x = "Hello"
-print(language_detector(text_only_limited))
+# x = "Hello"
+# print(language_detector(text_only_limited))
+
+
+
