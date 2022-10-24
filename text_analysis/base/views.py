@@ -52,7 +52,7 @@ def language_detector(text):
 
 
 
-
+######__________________Scrapping__________________###
 def join_with(mylist, operator):
     return f' {operator} '.join(mylist)
 
@@ -247,7 +247,7 @@ def result(request):
 
 
 
-
+###__________________API______________________________###
 
 
     # x = get_api(text_only, lang)
