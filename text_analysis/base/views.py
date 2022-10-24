@@ -81,6 +81,16 @@ def clean_text(x):
     x = re.sub('\s{2,}', " ", x)        # Replace the over spaces
     return x
 
+
+
+def text_without_stop_words(text,stopwords):
+    for i in (text.split()):
+        if i in stopwords:
+            text = text.replace(i, '')
+    return text
+
+
+
 #Création d'un texte unique pour l'analyse
 def getQuery(searsh_query):
     query = searsh_query[0] + " lang:" + searsh_query[13] + " " 
@@ -420,14 +430,19 @@ def your_text_result(request):
         # max_labels = labels[max_data_index]
 
 
-        stop_words = our_get_stop_words(lang) #Get stop words with this language
-        get_word_cloud(stop_words, text, max_labels)
+        stoplist = our_get_stop_words(lang)
+        is_without_stop_words = text_without_stop_words(text,stoplist)
+        if re.search('[a-zA-Z]', is_without_stop_words) != None:       # check if is_without_stop_words containes any letter from a to Z or from A to Z
+            stop_words = our_get_stop_words(lang) #Get stop words with this language
+            get_word_cloud(stop_words, text, max_labels)
+        else : 
+            return render(request, 'result_with_no_text.html', {'query': text})
 
 
         return render(request, 'your_text_result.html', { 
-                                                        'n':n,
-                                                        "data":data,
-                                                        "labels":labels,
-                                                        'max_data':round(max_data,2),
-                                                        'max_labels':max_labels
-                                                        })
+                                                            'n':n,
+                                                            "data":data,
+                                                            "labels":labels,
+                                                            'max_data':round(max_data,2),
+                                                            'max_labels':max_labels
+                                                            })
