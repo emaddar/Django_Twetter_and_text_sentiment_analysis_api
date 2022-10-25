@@ -314,8 +314,8 @@ def result(request):
     phrase = f"from {from_date} to {to_date}"
     Period = [phrase, phrase, phrase]
     my_api_df = pd.DataFrame({
-        "Probability":data,
-        "labels":labels,
+        "Probability":[data[1],data[0],data[2]],
+        "labels":[labels[1],labels[0],labels[2]],
         "Period":Period
     })
 
@@ -358,8 +358,8 @@ def result(request):
     phrase_365 = f"from {from_date_1_year_ago} to {to_date_1_year_ago}"
     Period = [phrase_365, phrase_365, phrase_365]
     my_api_df_365 = pd.DataFrame({
-        "Probability":data_365_days_ago,
-        "labels":labels_365_days_ago,
+        "Probability":[data_365_days_ago[1],data_365_days_ago[0],data_365_days_ago[2]],
+        "labels":[labels_365_days_ago[1],labels_365_days_ago[0],labels_365_days_ago[2]],
         "Period":Period
     })
 
