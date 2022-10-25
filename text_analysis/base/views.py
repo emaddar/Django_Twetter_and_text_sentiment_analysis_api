@@ -282,30 +282,30 @@ def result(request):
 ##__________________API______________________________###
 
 
-    x = get_api(text_only, lang)
+    # x = get_api(text_only, lang)
     
-    if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
-        data = x[0]
-        labels = x[1]
-        n = x[2]
+    # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+    #     data = x[0]
+    #     labels = x[1]
+    #     n = x[2]
 
-        max_data = max(data)
-        max_data_index = data.index(max(data))
-        max_labels = labels[max_data_index]
-    else :
-        data = [0, 0, 0]   # This means wa can not do setiment analysis
-        labels = ["Positive", "Negative", "Neutral"]
+    #     max_data = max(data)
+    #     max_data_index = data.index(max(data))
+    #     max_labels = labels[max_data_index]
+    # else :
+    #     data = [0, 0, 0]   # This means wa can not do setiment analysis
+    #     labels = ["Positive", "Negative", "Neutral"]
 
 
 
 
     
-    # data = [60, 30, 10]
-    # labels = ["Positive", "Negative", "Neutral"]
-    # max_data = max(data)
-    # max_data_index = data.index(max(data))
-    # max_labels = labels[max_data_index]
-    # n = 4000
+    data = [60, 30, 10]
+    labels = ["Positive", "Negative", "Neutral"]
+    max_data = max(data)
+    max_data_index = data.index(max(data))
+    max_labels = labels[max_data_index]
+    n = 4000
 
     df_date_sorted = df.sort_values(['Date'],ascending=True)
     from_date = df_date_sorted.iloc[0]['Date'].strftime("%Y-%m-%d")
@@ -340,19 +340,19 @@ def result(request):
 
 ##__________________ API 365_days_ago ______________________________###
 
-    api_365_days_ago = get_api(text_only_365_days_ago, lang)
+    # api_365_days_ago = get_api(text_only_365_days_ago, lang)
     
-    if len(api_365_days_ago) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
-        data_365_days_ago = api_365_days_ago[0]
-        labels_365_days_ago = api_365_days_ago[1]
-        n_365_days_ago = api_365_days_ago[2]
-    else :
-        data_365_days_ago = [0, 0, 0]   # This means wa can not do setiment analysis
-        labels_365_days_ago = ["Positive", "Negative", "Neutral"]
+    # if len(api_365_days_ago) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+    #     data_365_days_ago = api_365_days_ago[0]
+    #     labels_365_days_ago = api_365_days_ago[1]
+    #     n_365_days_ago = api_365_days_ago[2]
+    # else :
+    #     data_365_days_ago = [0, 0, 0]   # This means wa can not do setiment analysis
+    #     labels_365_days_ago = ["Positive", "Negative", "Neutral"]
 
-    # data_365_days_ago = [86.99999999999999, 0.208, 0.9705]
-    # labels_365_days_ago = ["Positive", "Negative", "Neutral"]
-    # n_365_days_ago = 4000
+    data_365_days_ago = [86.99999999999999, 0.208, 0.9705]
+    labels_365_days_ago = ["Positive", "Negative", "Neutral"]
+    n_365_days_ago = 4000
 
 
     phrase_365 = f"from {from_date_1_year_ago} to {to_date_1_year_ago}"
@@ -457,6 +457,7 @@ def result(request):
                                         "from_to_365_days_ago":from_to_365_days_ago,
                                         "data_365_days_ago":data_365_days_ago,
                                         "labels_365_days_ago":labels_365_days_ago,
+                                        "result_df_api": result_df_api.to_html()
                                          }
                                         )
     else :
