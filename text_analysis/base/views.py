@@ -26,6 +26,7 @@ from django.urls import reverse_lazy                    # For signUp page Method
 from django.views import generic                        # For signUp page Methode 2
 
 import langid  #for language detect
+import datetime 
 
 
 ###__________________Sign Up__________________###
@@ -278,7 +279,7 @@ def result(request):
 
 
 
-###__________________API______________________________###
+##__________________API______________________________###
 
 
     x = get_api(text_only, lang)
@@ -295,6 +296,9 @@ def result(request):
         data = [0, 0, 0]   # This means wa can not do setiment analysis
         labels = ["Positive", "Negative", "Neutral"]
 
+
+
+
     
     # data = [60, 30, 10]
     # labels = ["Positive", "Negative", "Neutral"]
@@ -303,6 +307,17 @@ def result(request):
     # max_labels = labels[max_data_index]
     # n = 4000
 
+    df_date_sorted = df.sort_values(['Date'],ascending=True)
+    from_date = df_date_sorted.iloc[0]['Date'].strftime("%Y-%m-%d")
+    to_date = df_date_sorted.iloc[-1]['Date'].strftime("%Y-%m-%d")
+
+    phrase = f"from {from_date} to {to_date}"
+    Period = [phrase, phrase, phrase]
+    my_api_df = pd.DataFrame({
+        "Probability":data,
+        "labels":labels,
+        "Period":Period
+    })
 
 
 
@@ -310,8 +325,11 @@ def result(request):
     from_to_365_days_ago = get_from_to_date_k_days_ago(df,365)
     from_date_1_year_ago = str(from_to_365_days_ago[0])
     to_date_1_year_ago = str(from_to_365_days_ago[1])
-    query = re.sub(r'until:\S+', 'until:'+to_date_1_year_ago, query)     # Remove URL
-    query = re.sub(r'since:\S+', 'since:'+from_date_1_year_ago, query)        # Remove mentions
+    query = re.sub(r'until:\S+', '', query)     # Remove URL
+    query = re.sub(r'since:\S+', '', query)        # Remove mentions
+    query += ' until:'+to_date_1_year_ago
+    query += ' since:'+from_date_1_year_ago
+
 
     df_365_days_ago = get_tweets(query, int(limit))
     df_365_days_ago = df_365_days_ago.sort_values(['Like', 'Retweet','Replay'],ascending=False)
@@ -320,24 +338,49 @@ def result(request):
     text_only_365_days_ago = clean_text(x_365_days_ago)
 
 
-###__________________ API 365_days_ago ______________________________###
+##__________________ API 365_days_ago ______________________________###
 
     api_365_days_ago = get_api(text_only_365_days_ago, lang)
     
-    # if len(api_365_days_ago) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
-    #     data_365_days_ago = api_365_days_ago[0]
-    #     labels_365_days_ago = api_365_days_ago[1]
-    #     n_365_days_ago = api_365_days_ago[2]
+    if len(api_365_days_ago) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+        data_365_days_ago = api_365_days_ago[0]
+        labels_365_days_ago = api_365_days_ago[1]
+        n_365_days_ago = api_365_days_ago[2]
+    else :
+        data_365_days_ago = [0, 0, 0]   # This means wa can not do setiment analysis
+        labels_365_days_ago = ["Positive", "Negative", "Neutral"]
 
-    #     max_data_365_days_ago = max(api_365_days_ago)
-    #     max_data_index_365_days_ago = data.index(max(data_365_days_ago))
-    #     max_labels_365_days_ago = labels[max_data_index_365_days_ago]
-    # else :
-    #     data_365_days_ago = [0, 0, 0]   # This means wa can not do setiment analysis
-    #     labels_365_days_ago = ["Positive", "Negative", "Neutral"]
+    # data_365_days_ago = [86.99999999999999, 0.208, 0.9705]
+    # labels_365_days_ago = ["Positive", "Negative", "Neutral"]
+    # n_365_days_ago = 4000
 
 
+    phrase_365 = f"from {from_date_1_year_ago} to {to_date_1_year_ago}"
+    Period = [phrase_365, phrase_365, phrase_365]
+    my_api_df_365 = pd.DataFrame({
+        "Probability":data_365_days_ago,
+        "labels":labels_365_days_ago,
+        "Period":Period
+    })
 
+
+    #concatenating dataframes
+    frames = [my_api_df, my_api_df_365]
+    result_df_api = pd.concat(frames)
+
+
+    import seaborn as sns
+
+
+    sns.set(rc={'figure.figsize':(11.7,8.27)})
+    sns.barplot(x = 'Period', y = 'Probability', hue = 'labels', data = result_df_api,
+            palette = 'hls',
+            # order = ['male', 'female'],  
+            capsize = 0.05,             
+            saturation = 8,             
+            errcolor = 'gray', errwidth = 2,  
+            )
+    plt.savefig('./base/static/base/images/sns.png')  
 
 #Envoi du résultat sur le site
     if text_only != "":
@@ -412,7 +455,8 @@ def result(request):
                                          "tweet_3_Url" : tweet_3_Url,
                                         "df_365_days_ago":df_365_days_ago.to_html,
                                         "from_to_365_days_ago":from_to_365_days_ago,
-                                        "api_365_days_ago":api_365_days_ago
+                                        "data_365_days_ago":data_365_days_ago,
+                                        "labels_365_days_ago":labels_365_days_ago,
                                          }
                                         )
     else :

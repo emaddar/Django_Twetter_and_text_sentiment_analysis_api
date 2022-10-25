@@ -4,8 +4,6 @@
 
 {% block content %}
 <main>
-<h1>{{query}}</h1>
-<h1>{{api_365_days_ago}}</h1>
 
 
   {% if max_labels == 'Positive' %}
@@ -157,17 +155,20 @@
 
 
 
+
+<img class="card-img-top" src="{% static 'base/images/sns.png' %}" alt="Card image-top"> 
+
+
+
+<p></p>
+<p></p>
+<p></p>
+
+
+
 <p></p>
 <h4 style="color:rgb(44, 44, 90); font-weight: 700; display: flex; justify-content: space-between">
      <a href="{% url 'tweeter_scrape' %}"><i class="fa-solid fa-angles-left"></i> Back</a> <a href="#"><i class="fa-solid fa-angles-up"></i> Go to top</a>
 </h4>
-
-
-
-<p></p>
-<p></p>
-<p></p>
-
-
 </main>
 {% endblock content %}

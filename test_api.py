@@ -171,50 +171,42 @@ text_only_limited = "  Françaises, Français,  Mes chers compatriotes de métro
 
 # x = "Hello"
 # print(language_detector(text_only_limited))
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
-import re
-from stop_words import get_stop_words
+data = [60, 30, 10]
+labels = ["Positive", "Negative", "Neutral"]
+Period = ["from_date to_date", "from_date to_date", "from_date to_date"]
+my_api_df = pd.DataFrame({
+    "Probability":data,
+    "labels":labels,
+    "Period":Period
+})
+
+data_365_days_ago = [86.99999999999999, 0.208, 0.9705]
+labels_365_days_ago = ["Positive", "Negative", "Neutral"]
+Period = ["from_compared_date to_compared_date", "from_compared_date to_compared_date", "from_compared_date to_compared_date"]
+my_api_df_365 = pd.DataFrame({
+    "Probability":data_365_days_ago,
+    "labels":labels_365_days_ago,
+    "Period":Period
+})
+
+frames = [my_api_df, my_api_df_365]
+result_df_api = pd.concat(frames)
 
 
-###__________________Nettoyage du texte__________________###
-#Supression brouillard du texte
-def clean_text(x):
-    x = re.sub(r'http\S+', '', x)     # Remove URL
-    x = re.sub(r'@\S+', '', x)        # Remove mentions
-    x = re.sub(r'#\S+', '', x)        # Remove Hashtags
-    x = re.sub('\n+', '', x)
-    x = re.sub("\'\w+", '', x)                 # Remove ticks and the next character
-    x = re.sub(r'\w*\d+\w*', '', x)     # Remove numbers
-    x = re.sub('\s{2,}', " ", x)        # Replace the over spaces
-    return x
 
 
 
-def our_get_stop_words(lang):
-    stop_words = get_stop_words(lang) #Nettoyage des appax, possible d'en ajouter à la
-    if lang == "fr":
-        ma_list_fr = ["bcp", "Bcp", "trkl", "c'est", "est","s'en","j'ai","etc", "ça", "n'a","n'as","ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","qu'il","qu'elle","vs","bcp","mdr", "d'un", "d'une", "s'il", "s'ils", "ya", "n'est"]
-        for mot in ma_list_fr:
-             if mot not in stop_words:
-                 stop_words.append(mot)
-    elif lang == "en":
-        ma_list_en = ["day","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
-        for mot in ma_list_en:
-             if mot not in stop_words:
-                 stop_words.append(mot)
-    return stop_words
-
-text = "he is @sdf"
-text = clean_text(text)
-stoplist = our_get_stop_words("en")
-
-
-def text_without_stop_words(text,stopwords):
-    for i in (text.split()):
-        if i in stopwords:
-            text = text.replace(i, '')
-    return text
-
-is_without_stop_words = text_without_stop_words(text,stoplist)
-print(re.search('[a-zA-Z]', is_without_stop_words)==None)
+sns.barplot(x = 'Period', y = 'Probability', hue = 'labels', data = result_df_api,
+            palette = 'hls',
+            # order = ['male', 'female'],  
+            capsize = 0.05,             
+            saturation = 8,             
+            errcolor = 'gray', errwidth = 2,  
+            )
+plt.show()
