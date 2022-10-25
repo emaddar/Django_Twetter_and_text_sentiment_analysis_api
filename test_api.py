@@ -195,18 +195,29 @@ my_api_df_365 = pd.DataFrame({
     "Period":Period
 })
 
-frames = [my_api_df, my_api_df_365]
-result_df_api = pd.concat(frames)
 
 
-
-
-
-sns.barplot(x = 'Period', y = 'Probability', hue = 'labels', data = result_df_api,
-            palette = 'hls',
-            # order = ['male', 'female'],  
-            capsize = 0.05,             
-            saturation = 8,             
-            errcolor = 'gray', errwidth = 2,  
-            )
+result_df_api_test2 = pd.DataFrame({
+  "Period" : ["from_date to_date", "from_compared_date to_compared_date"]  ,
+  "Positive" : [data[0], data_365_days_ago[0]],
+  "Negative" :[data[1], data_365_days_ago[1]],
+  "Neutral" : [data[2], data_365_days_ago[2]]
+})
+result_df_api_test2.plot(x="Period", y=["Positive", "Negative", "Neutral"], kind="bar")
 plt.show()
+# frames = [my_api_df, my_api_df_365]
+# result_df_api = pd.concat(frames)
+
+
+# sns.barplot(x = 'Period', y = 'Probability', hue = 'labels', data = result_df_api,
+#             palette = 'hls',
+#             # order = ['male', 'female'],  
+#             capsize = 0.05,             
+#             saturation = 8,             
+#             errcolor = 'gray', errwidth = 2,  
+#             )
+
+
+
+# result_df_api.plot(x="Period", y="Probability", kind="bar")
+# plt.show()

@@ -3,8 +3,8 @@
 {% load static %}
 
 {% block content %}
-<main>
-{{result_df_api|safe}}
+
+
 
   {% if max_labels == 'Positive' %}
   <h1 style="color:rgb(44, 44, 90); font-weight: 700;">
@@ -155,10 +155,30 @@
 
 
 
+<p></p>
 
-<img class="card-img-top" src="{% static 'base/images/sns.png' %}" alt="Card image-top"> 
+{% if radio_yes == 'Yes' %}
+<h1 style="color:rgb(44, 44, 90); font-weight: 700;">
+  <i class="fa-solid fa-code-compare"></i> Compare results from the same period last year
+</h1>
+<p></p>
 
 
+<div class="card text-center">
+  {% comment %} <div class="card-header">
+    Compare results from the same period last year
+  </div> {% endcomment %}
+  <div class="card-body">
+    {% comment %} <h5 class="card-title">Special title treatment</h5> {% endcomment %}
+    <img class="card-img-top" src="{% static 'base/images/copmared_365_days.png' %}" alt="Card image-top"> 
+  </div>
+  <div class="card-footer text-muted">
+    <small class="text-muted">This graphic compares the sentiment analysis in period {{phrase}} and the period {{phrase_365}}. 
+      <font color="red">Attention : </font>  You may not find any Tweet for the same query 365 ago
+    </small>
+  </div>
+</div>
+{% endif %}
 
 <p></p>
 <p></p>
@@ -170,5 +190,7 @@
 <h4 style="color:rgb(44, 44, 90); font-weight: 700; display: flex; justify-content: space-between">
      <a href="{% url 'tweeter_scrape' %}"><i class="fa-solid fa-angles-left"></i> Back</a> <a href="#"><i class="fa-solid fa-angles-up"></i> Go to top</a>
 </h4>
-</main>
+
+
+
 {% endblock content %}

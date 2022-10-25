@@ -128,9 +128,50 @@
                 </div>
             </div>
               
+    
+
+            
           </div>
           <p></p>
             
+
+
+
+
+
+
+          <fieldset>
+            <legend>Compare results with tweets 365 before selected dates ?</legend>
+
+            <div class="col-md">
+              <div class="form-floating">
+                <label for="floatingInputGrid">Selected : </label>
+                <select class="form-select" id="floatingInputGrid" name = "radio_yes">
+                  <option value="No">No</option>
+                  <option>Yes</option>
+                </select>
+              </div>
+            </div>   
+        </fieldset>
+
+
+
+        {% comment %} Juste a space  {% endcomment %}
+        <fieldset>
+          <legend></legend>
+          <div class="col-md">
+            <div class="form-floating">
+              <label for="floatingInputGrid"> </label>
+            </div>
+          </div>   
+      </fieldset>
+
+
+
+        <div style="width: 100%;">
+
+
+        
     
     <!-- ************************************************************************** -->
     <!-- ************************Onglet options************************************ -->
@@ -272,8 +313,8 @@
       </form>
     
     
-      <a href="{% url 'home' %}"> <i class="fa-solid fa-angles-left"></i> Back to Home </a>
-    
+      {% comment %} <a href="{% url 'home' %}"> <i class="fa-solid fa-angles-left"></i> Back to Home </a>
+     {% endcomment %}
     
     </main>
 </body>
