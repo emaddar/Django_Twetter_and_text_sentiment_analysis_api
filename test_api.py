@@ -160,64 +160,29 @@ text_only_limited = "  Françaises, Français,  Mes chers compatriotes de métro
 
 
 
-#########################################################################
-#                          language detector                            #
-#########################################################################
-
-# import langid  #for language detect
-# def language_detector(text):
-#     return langid.classify(text)[0]
 
 
-# x = "Hello"
-# print(language_detector(text_only_limited))
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+from dataclasses import replace
+import requests
+from bs4 import BeautifulSoup
+import re
+ 
+page = requests.get('https://www.bfmtv.com/') # Getting page HTML through request
+soup = BeautifulSoup(page.content, 'html.parser') # Parsing content using beautifulsoup
+scrap_text  = []
+for anchor in soup:
+    scrap_text.append(anchor.text) # Display the innerText of each anchor
 
+def clean_text(x):
+    x = re.sub(r'http\S+', '', x)     # Remove URL
+    x = re.sub(r'@\S+', '', x)        # Remove mentions
+    x = re.sub(r'#\S+', '', x)        # Remove Hashtags
+    x = re.sub('\n+', '', x)
+    x = re.sub("\'\w+", '', x)                 # Remove ticks and the next character
+    x = re.sub(r'\w*\d+\w*', '', x)     # Remove numbers
+    x = re.sub('\s{2,}', " ", x)        # Replace the over spaces
+    x = x.replace('()', '')             #remove ()
 
-data = [60, 30, 10]
-labels = ["Positive", "Negative", "Neutral"]
-Period = ["from_date to_date", "from_date to_date", "from_date to_date"]
-my_api_df = pd.DataFrame({
-    "Probability":data,
-    "labels":labels,
-    "Period":Period
-})
+    return x
 
-data_365_days_ago = [86.99999999999999, 0.208, 0.9705]
-labels_365_days_ago = ["Positive", "Negative", "Neutral"]
-Period = ["from_compared_date to_compared_date", "from_compared_date to_compared_date", "from_compared_date to_compared_date"]
-my_api_df_365 = pd.DataFrame({
-    "Probability":data_365_days_ago,
-    "labels":labels_365_days_ago,
-    "Period":Period
-})
-
-
-
-result_df_api_test2 = pd.DataFrame({
-  "Period" : ["from_date to_date", "from_compared_date to_compared_date"]  ,
-  "Positive" : [data[0], data_365_days_ago[0]],
-  "Negative" :[data[1], data_365_days_ago[1]],
-  "Neutral" : [data[2], data_365_days_ago[2]]
-})
-result_df_api_test2.plot(x="Period", y=["Positive", "Negative", "Neutral"], kind="bar")
-plt.show()
-# frames = [my_api_df, my_api_df_365]
-# result_df_api = pd.concat(frames)
-
-
-# sns.barplot(x = 'Period', y = 'Probability', hue = 'labels', data = result_df_api,
-#             palette = 'hls',
-#             # order = ['male', 'female'],  
-#             capsize = 0.05,             
-#             saturation = 8,             
-#             errcolor = 'gray', errwidth = 2,  
-#             )
-
-
-
-# result_df_api.plot(x="Period", y="Probability", kind="bar")
-# plt.show()
+print(clean_text(''.join(scrap_text)))

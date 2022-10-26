@@ -3,8 +3,10 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import  home, tweet, result, about, signup, your_text, your_text_result
+from .views import  home, tweet, result, about, signup, your_text, your_text_result, upload_file, upload_file_result
 from . import views
+
+
 
 urlpatterns = [
     path('', home, name='home'),
@@ -15,4 +17,6 @@ urlpatterns = [
     path('signup/', signup, name='signup'),
     path('your_text/', your_text, name='your_text'),
     path('your_text/your_text_result', your_text_result, name='your_text_result'),
+    path('upload_file', upload_file, name = 'upload_file'),
+    path('upload_file_result', upload_file_result, name = 'upload_file_result'),
 ]

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+  
+
+<form action="upload_file_result">
+    {% csrf_token %}
+    <div class="row g-2">
+
+      <!-- all_words -->
+        <div class="col-md">
+          <div class="form-floating">
+            <label for="floatingInputGrid">URL : </label>
+            <input type="text" class="form-control" id="myFile" multiple onchange="myfunction()" placeholder="Ex: https://www.bfmtv.com/*" name="file" required>
+            <p id = "demo"></p>
+        </div>
+        </div>
+        <input class="btn btn-primary btn-lg btn-block" type="submit" value='Predict'>
+    
+    </form>
+
+
+
+
+
+
+{% endblock content %}

@@ -12,3 +12,16 @@ class SignUp(forms.Form):
 
 class YourTextForm(forms.Form):
     your_text_field = forms.CharField(widget=forms.Textarea, required=True)
+
+
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
+
+
+class DocumentForm(forms.Form):
+    docfile = forms.FileField(
+        label='Select a file',
+        help_text='max. 42 megabytes'
+    )

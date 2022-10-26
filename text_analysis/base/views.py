@@ -1,6 +1,7 @@
 
 from cProfile import label
 from email.mime import image
+from http.client import HTTPResponse
 import imp
 from django.shortcuts import render
 import snscrape.modules.twitter as sntwitter
@@ -21,7 +22,7 @@ import random
 from datetime import datetime, timedelta
 
 from django.http import HttpResponseRedirect   # For signUp page
-from .forms import SignUp                       # For signUp page
+from .forms import SignUp, UploadFileForm                       # For signUp page
 
 
 from django.contrib.auth.forms import UserCreationForm  # For signUp page Methode 2
@@ -83,9 +84,11 @@ def clean_text(x):
     x = re.sub("\'\w+", '', x)                 # Remove ticks and the next character
     x = re.sub(r'\w*\d+\w*', '', x)     # Remove numbers
     x = re.sub('\s{2,}', " ", x)        # Replace the over spaces
+    x = x.replace('()', '')             #remove ()
+    x = x.replace('>>>','')
+    x = x.replace('#', '')
+
     return x
-
-
 
 def text_without_stop_words(text,stopwords):
     for i in (text.split()):
@@ -546,3 +549,84 @@ def your_text_result(request):
                                                             'max_data':round(max_data,2),
                                                             'max_labels':max_labels
                                                             })
+
+
+
+#################################################################################################################################
+#################################################################################################################################
+#################################################################################################################################
+###                                                                                                                           ###
+###                                                     Scrape any URL and analyse the text                                                            ###
+###                                                                                                                           ###
+#################################################################################################################################
+#################################################################################################################################
+#################################################################################################################################
+
+from dataclasses import replace
+import requests
+from bs4 import BeautifulSoup
+import re
+
+
+def upload_file(request):
+    return render(request, 'upload_file.html')
+
+
+def upload_file_result(request):
+    text = request.GET['file']
+    
+    page = requests.get(text) # Getting page HTML through request
+    soup = BeautifulSoup(page.content, 'html.parser') # Parsing content using beautifulsoup
+    scrap_text  = []
+    for anchor in soup:
+        scrap_text.append(anchor.text) # Display the innerText of each anchor
+    text = clean_text(''.join(scrap_text))
+
+    lang = language_detector(text) # detect the language
+
+
+
+
+
+    # x = get_api(text, lang)  # get sentiment analysis
+    # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+    #     data = x[0]
+    #     labels = x[1]
+    #     n = x[2]
+
+    #     max_data = max(data)
+    #     max_data_index = data.index(max(data))
+    #     max_labels = labels[max_data_index]
+    # else :
+    #     data = [0, 0, 0]   # This means wa can not do setiment analysis
+    #     labels = ["Positive", "Negative", "Neutral"]
+
+
+
+    data = [60, 30, 10]
+    labels = ["Positive", "Negative", "Neutral"]
+    max_data = max(data)
+    max_data_index = data.index(max(data))
+    max_labels = labels[max_data_index]
+    n = 4000
+
+
+    stoplist = our_get_stop_words(lang)
+    is_without_stop_words = text_without_stop_words(text,stoplist)
+    if re.search('[a-zA-Z]', is_without_stop_words) != None:       # check if is_without_stop_words containes any letter from a to Z or from A to Z
+        stop_words = our_get_stop_words(lang) #Get stop words with this language
+        get_word_cloud(stop_words, text, max_labels)
+    else : 
+        return render(request, 'result_with_no_text.html', {'query': text})
+
+
+    return render(request, 'upload_file_result.html', { 
+                                                            'n':n,
+                                                            "data":data,
+                                                            "labels":labels,
+                                                            'max_data':round(max_data,2),
+                                                            'max_labels':max_labels
+                                                            })
+
+
+
