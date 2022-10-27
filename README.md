@@ -2,7 +2,7 @@
 Twitter API sentiment analysis
 </H1>
 
-Cette application permet à partir d'une recherche des derniers n tweets (n à définir par l'utilisateur) d'opérer une analyse des sentiments. Pour cela, l'applciation mobilise différents API mobilisant l'intelligence articielle. 
+Cette application permet à partir d'une recherche des derniers n tweets (n à définir par l'utilisateur) d'opérer une analyse des sentiments. Pour cela, l'application mobilise différents API mobilisant l'intelligence articielle. 
 
 ![accueil](./ressources/apercu_accueil.png)
 

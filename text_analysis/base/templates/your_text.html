@@ -5,7 +5,7 @@
 {% block content %}
 {% load crispy_forms_tags %}
 
-<h1>Your text</h1>
+{% comment %} <h1>Your text</h1> {% endcomment %}
 
 <form action="your_text_result" method="post">
   {% csrf_token %}

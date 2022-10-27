@@ -15,12 +15,14 @@
   </h1>
   <h3 style="color: rgb(50, 92, 87);">Coming Soon</h3> -->
 
-
+<br>
+<br>
+<br>
   <div class="row">
     <div class="col-lg-4">
       <!-- <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 140x140" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#777"></rect><text x="50%" y="50%" fill="#777" dy=".3em">140x140</text></svg> -->
       <img src="{% static 'base/images/twitter_wordcloud.jpg' %}" class="bd-placeholder-img rounded-circle" width="140" height="140" />
-      <h2 class="fw-normal">Twitter sentiment analysis</h2>
+      <h2 class="fw-normal">Twitter analysis</h2>
       <p style="text-align: justify;">This application searches for the latest Tweets in a defined period. Then an AI model analyzes and summarizes the tweets to give the general sentiment on the subject or the person in question.</p>
       <p><a class="btn btn-secondary" href="{% url 'tweeter_scrape' %}">View details »</a></p>
     </div><!-- /.col-lg-4 -->
@@ -30,17 +32,17 @@
       <!-- <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 140x140" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#777"></rect><text x="50%" y="50%" fill="#777" dy=".3em">140x140</text></svg> -->
       <img src="{% static 'base/images/yourtext.png' %}" class="bd-placeholder-img rounded-circle" width="140" height="140" />
       <h2 class="fw-normal">Your text analysis</h2>
-      <p style="text-align: justify;">In this application, you can write or paste your text. Then an AI model analyzes and summarizes the tweets to give the general sentiment on the subject or the person in question.</p>
+      <p style="text-align: justify;">In this application, you can write or paste your text. Then an AI model analyzes and summarizes the content to give the general sentiment on the subject or the person in question.</p>
       <p><a class="btn btn-secondary" href="{% url 'your_text' %}">View details »</a></p>
     </div><!-- /.col-lg-4 -->
 
 
 
     <div class="col-lg-4">
-      <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 140x140" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#777"></rect><text x="50%" y="50%" fill="#777" dy=".3em">140x140</text></svg>
-
+      {% comment %} <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 140x140" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#777"></rect><text x="50%" y="50%" fill="#777" dy=".3em">140x140</text></svg> {% endcomment %}
+      <img src="{% static 'base/images/url.jpg' %}" class="bd-placeholder-img rounded-circle" width="140" height="140" />
       <h2 class="fw-normal">URL Text Analysis</h2>
-      <p>And lastly this, the third column of representative placeholder content.</p>
+      <p style="text-align: justify;">In this application, you can paste an URL link (for example from an online media). Then an AI model analyzes and summarizes the content of the website page to give the general sentiment on the subject.</p>
       <p><a class="btn btn-secondary" href={% url 'upload_file' %}>View details »</a></p>
     </div><!-- /.col-lg-4 -->
   </div>
