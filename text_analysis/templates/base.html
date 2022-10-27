@@ -15,9 +15,9 @@
 <style>
   .center {
     text-align : center;
-    margin-top: 0%;
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
     background-color: rgb(230, 239, 245);
     padding: 10px; 
   }
@@ -60,7 +60,21 @@
     
     {% include 'includes/header.html' %}
     <main>
-    {% block content %}{% endblock content %}
+   
+    
+
+            <div class="container">
+                    {% if messages %}
+                      {% for message in messages %}
+                          {{message}}
+                      {% endfor %}
+                    {% endif %}
+                  
+
+                  {% block content %}
+                  {% endblock %}
+          </div>
+
     </main
 
 {% include 'includes/footer.html' %}
