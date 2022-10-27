@@ -32,18 +32,17 @@ from django.views import generic                        # For signUp page Method
 import langid  #for language detect
 import datetime 
 
+from django.contrib.auth.decorators import login_required
 
-###__________________Sign Up__________________###
-# 127.0.0.1/form
-def signup(request):
-    return render(request, 'signup.html', {'signupForm' : SignUp})
+
+
 
 
 ###__________________about page__________________###
 def about(request):
     return render(request, 'about.html')
 ###__________________Scrape des tweets__________________###
-
+@login_required
 def tweet(request):
     return render(request, 'index.html')
 
@@ -496,7 +495,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import render
 
 
-
+@login_required
 def your_text(request):
     return render(request, 'your_text.html', {'YourTextForm' : YourTextForm})
 
@@ -567,7 +566,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-
+@login_required
 def upload_file(request):
     return render(request, 'upload_file.html')
 
@@ -630,3 +629,27 @@ def upload_file_result(request):
 
 
 
+
+
+
+#################################################################################################################################
+#################################################################################################################################
+#################################################################################################################################
+###                                                                                                                           ###
+###                                                     SignUp form Page                                                      ###
+###                                                                                                                           ###
+#################################################################################################################################
+#################################################################################################################################
+#################################################################################################################################
+
+
+###__________________Sign Up__________________###
+
+from django.views.generic import CreateView
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+
+class SignupPage(CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+    template_name = './registration/signup.html'
