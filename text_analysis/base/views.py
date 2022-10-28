@@ -665,8 +665,9 @@ def upload_file_result(request):
 from django.views.generic import CreateView
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
+from . import forms
 
 class SignupPage(CreateView):
-    form_class = UserCreationForm
+    form_class = forms.UserCreateForm
     success_url = reverse_lazy('login')
     template_name = './registration/signup.html'

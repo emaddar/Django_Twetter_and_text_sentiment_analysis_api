@@ -25,3 +25,13 @@ class DocumentForm(forms.Form):
         label='Select a file',
         help_text='max. 42 megabytes'
     )
+
+
+
+from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
+class UserCreateForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        fields = ('username', 'first_name','password1','password2')
