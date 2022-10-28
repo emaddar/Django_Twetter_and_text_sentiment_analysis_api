@@ -35,7 +35,14 @@ from .forms import YourTextForm                                         # For Yo
 from django.views.generic import TemplateView                           # For Your text analysis
 from dataclasses import replace                                         # For URL text analysis
 from bs4 import BeautifulSoup                                           # For URL text analysis
+from urllib import request
 
+
+def my_view(request):
+    api_key = None
+    if request.user.is_authenticated():
+        api_key = request.user.api_key
+    return(api_key)
 #################################################################################################################################
 #################################################################################################################################
 #################################################################################################################################
@@ -165,7 +172,8 @@ def get_word_cloud(stop_words, text_only, status):
 ###_____________________________Get API_____________________________###
 
 def get_api(text_only_limited, lang):
-    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
+    # headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
+    headers = {"Authorization": "Bearer "+my_view(request)}
     lang = "fr"
     url ="https://api.edenai.run/v2/text/sentiment_analysis"
 
@@ -254,27 +262,27 @@ def result(request):
     
     All_text = text_only
 
-#### API ####
-    # x = get_api(text_only, lang)
+### API ####
+    x = get_api(text_only, lang)
     
-    # if len(x) == 4 :                              # When get_api return False then len(get_API) = 1 else len(get_API) = 4
-    #     data = x[0]
-    #     labels = x[1]
-    #     n = x[2]
-    #     max_data = max(data)
-    #     max_data_index = data.index(max(data))
-    #     max_labels = labels[max_data_index]
-    # else :
-    #     data = [0, 0, 0]   # This means wa can not do setiment analysis
-    #     labels = ["Positive", "Negative", "Neutral"]
-#### API ####
+    if len(x) == 4 :                              # When get_api return False then len(get_API) = 1 else len(get_API) = 4
+        data = x[0]
+        labels = x[1]
+        n = x[2]
+        max_data = max(data)
+        max_data_index = data.index(max(data))
+        max_labels = labels[max_data_index]
+    else :
+        data = [0, 0, 0]   # This means wa can not do setiment analysis
+        labels = ["Positive", "Negative", "Neutral"]
+### API ####
 
-    data = [60, 30, 10]                             # API 365 Fixed Value (to save API credits)
-    labels = ["Positive", "Negative", "Neutral"]    # API 365 Fixed Value (to save API credits)
-    max_data = max(data)                            # API 365 Fixed Value (to save API credits)
-    max_data_index = data.index(max(data))          # API 365 Fixed Value (to save API credits)
-    max_labels = labels[max_data_index]             # API 365 Fixed Value (to save API credits)
-    n = 4000
+    # data = [60, 30, 10]                             # API 365 Fixed Value (to save API credits)
+    # labels = ["Positive", "Negative", "Neutral"]    # API 365 Fixed Value (to save API credits)
+    # max_data = max(data)                            # API 365 Fixed Value (to save API credits)
+    # max_data_index = data.index(max(data))          # API 365 Fixed Value (to save API credits)
+    # max_labels = labels[max_data_index]             # API 365 Fixed Value (to save API credits)
+    # n = 4000
 
     if radio_yes == "Yes" :
 
@@ -298,21 +306,21 @@ def result(request):
         x_365_days_ago = " ".join(list(df_365_days_ago['Tweet']))
         text_only_365_days_ago = clean_text(x_365_days_ago)
 
-#### API 365_days_ago ####
-        # api_365_days_ago = get_api(text_only_365_days_ago, lang)
+### API 365_days_ago ####
+        api_365_days_ago = get_api(text_only_365_days_ago, lang)
         
-        # if len(api_365_days_ago) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
-        #     data_365_days_ago = api_365_days_ago[0]
-        #     labels_365_days_ago = api_365_days_ago[1]
-        #     n_365_days_ago = api_365_days_ago[2]
-        # else :
-        #     data_365_days_ago = [0, 0, 0]   # This means wa can not do setiment analysis
-        #     labels_365_days_ago = ["Positive", "Negative", "Neutral"]
-#### API 365_days_ago ####
+        if len(api_365_days_ago) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+            data_365_days_ago = api_365_days_ago[0]
+            labels_365_days_ago = api_365_days_ago[1]
+            n_365_days_ago = api_365_days_ago[2]
+        else :
+            data_365_days_ago = [0, 0, 0]   # This means wa can not do setiment analysis
+            labels_365_days_ago = ["Positive", "Negative", "Neutral"]
+### API 365_days_ago ####
 
-        data_365_days_ago = [86.99999999999999, 0.208, 0.9705]            # API 365 Fixed Value (to save API credits)
-        labels_365_days_ago = ["Positive", "Negative", "Neutral"]         # API 365 Fixed Value (to save API credits)
-        n_365_days_ago = 4000                                             # API 365 Fixed Value (to save API credits)
+        # data_365_days_ago = [86.99999999999999, 0.208, 0.9705]            # API 365 Fixed Value (to save API credits)
+        # labels_365_days_ago = ["Positive", "Negative", "Neutral"]         # API 365 Fixed Value (to save API credits)
+        # n_365_days_ago = 4000                                             # API 365 Fixed Value (to save API credits)
 
         phrase_365 = f"from {from_date_1_year_ago} to {to_date_1_year_ago}"
 
@@ -469,26 +477,26 @@ def your_text_result(request):
         lang = language_detector(text)                           # Detect the language
 
 #### API ####
-        # x = get_api(text, lang)  # get sentiment analysis
-        # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
-        #     data = x[0]
-        #     labels = x[1]
-        #     n = x[2]
-        #     max_data = max(data)
-        #     max_data_index = data.index(max(data))
-        #     max_labels = labels[max_data_index]
-        # else :
-        #     data = [0, 0, 0]   # This means wa can not do setiment analysis
-        #     labels = ["Positive", "Negative", "Neutral"]
+        x = get_api(text, lang)  # get sentiment analysis
+        if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+            data = x[0]
+            labels = x[1]
+            n = x[2]
+            max_data = max(data)
+            max_data_index = data.index(max(data))
+            max_labels = labels[max_data_index]
+        else :
+            data = [0, 0, 0]   # This means wa can not do setiment analysis
+            labels = ["Positive", "Negative", "Neutral"]
 #### API ####
 
 ### API fixed values (to save API credits) ###
-        data = [60, 30, 10]
-        labels = ["Positive", "Negative", "Neutral"]
-        max_data = max(data)
-        max_data_index = data.index(max(data))
-        max_labels = labels[max_data_index]
-        n = 4000
+        # data = [60, 30, 10]
+        # labels = ["Positive", "Negative", "Neutral"]
+        # max_data = max(data)
+        # max_data_index = data.index(max(data))
+        # max_labels = labels[max_data_index]
+        # n = 4000
 ### API fixed values (to save API credits) ###
 
         stoplist = our_get_stop_words(lang)
@@ -522,27 +530,27 @@ def upload_file_result(request):
     lang = language_detector(text) # detect the language
 
 #### API ####
-    # x = get_api(text, lang)  # get sentiment analysis
-    # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
-    #     data = x[0]
-    #     labels = x[1]
-    #     n = x[2]
+    x = get_api(text, lang)  # get sentiment analysis
+    if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+        data = x[0]
+        labels = x[1]
+        n = x[2]
 
-    #     max_data = max(data)
-    #     max_data_index = data.index(max(data))
-    #     max_labels = labels[max_data_index]
-    # else :
-    #     data = [0, 0, 0]   # This means wa can not do setiment analysis
-    #     labels = ["Positive", "Negative", "Neutral"]
+        max_data = max(data)
+        max_data_index = data.index(max(data))
+        max_labels = labels[max_data_index]
+    else :
+        data = [0, 0, 0]   # This means wa can not do setiment analysis
+        labels = ["Positive", "Negative", "Neutral"]
 #### API ####
 
 ### API fixed values (to save API credits) ###
-    data = [60, 30, 10]
-    labels = ["Positive", "Negative", "Neutral"]
-    max_data = max(data)
-    max_data_index = data.index(max(data))
-    max_labels = labels[max_data_index]
-    n = 4000
+    # data = [60, 30, 10]
+    # labels = ["Positive", "Negative", "Neutral"]
+    # max_data = max(data)
+    # max_data_index = data.index(max(data))
+    # max_labels = labels[max_data_index]
+    # n = 4000
 ### API fixed values (to save API credits) ###
 
     stoplist = our_get_stop_words(lang)
