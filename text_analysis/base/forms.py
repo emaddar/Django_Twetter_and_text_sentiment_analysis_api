@@ -1,5 +1,6 @@
 from django import forms
 from django.core import validators
+from . import models
 
 class SignUp(forms.Form):
     user = forms.CharField(label='User Name', max_length=100)
@@ -34,4 +35,5 @@ from django.contrib.auth.forms import UserCreationForm
 
 class UserCreateForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
-        fields = ('username', 'first_name','password1','password2')
+        model = models.User
+        fields = ('username', 'first_name','password1','password2', 'api_key')
