@@ -2,7 +2,10 @@
 Text analysis
 </H1>
 
-Ce site internet permet de réaliser une analyse de sentiment de texte en utilisant trois applications. Pour cela, l'application utilise différents API mobilisant l'intelligence articielle. 
+This website helps to perform a text sentiment analysis using three applications. For this, the site uses different APIs mobilizing articial intelligence. 
+
+<u>Usage advice for APIs :</u><br>
+There is no limit (neither in number nor in date) of requests per day regarding the search for tweets or the sending of texts.However, you must create an [account](https://app.edenai.run/user/login?referral=sentiment-analysis-how-to) to make the analysis of feelings and inform the key obtained. The site then offers a credit of 10 dollars to be consumed according to the use.
 
 <H1 style="color:rgb(44, 44, 90)", align = "center">
 Twitter analysis
@@ -12,44 +15,81 @@ Twitter analysis
 <img src="./ressources/twiter_analysis_home.png" /> 
 </p>
 
-Pour cette application nous sollicitons notamment :
-- [Edenai](https://www.edenai.co/post/which-sentiment-analysis-api-to-choose-for-your-project) pour analyser la charge émotionnelle des tweets selectionnés
-- Le package [snscrape](https://github.com/JustAnotherArchivist/snscrape) pour opérer la requête sur twitter
-- Le package [stopwords](https://pypi.org/project/stop-words/) pour chercher les appax permettant de nettoyer le texte récolté. **Note: Nous avons amendé cette liste de nos propres mots** _N'hesitez pas à nous contacter si vous souhaitez ajouter d'autres mots_
-- Le package [word cloud](https://pypi.org/project/wordcloud/) pour afficher le nuage de mot afférent
+For this application we require :
+- [Edenai](https://www.edenai.co/post/which-sentiment-analysis-api-to-choose-for-your-project) to analyze the emotional charge of selected tweets
+- [Snscrape](https://github.com/JustAnotherArchivist/snscrape) to make the request on twitter
+- [Stopwords](https://pypi.org/project/stop-words/) to search for appax to clean the collected text. **Note: We have amended this list with our own words** _Don't hesitate to contact us if you wish to add other words_
+- [Word cloud](https://pypi.org/project/wordcloud/) to display the related word cloud
 
-Une fois la requête effectuée, notre application trie les tweets en priorisant les tweets les plus likés (puis les plus retweetés, puis les plus commentés) et renvoie deux pages possibles de résultat :
-- Si la recherche trouve au moins un tweet, le résultat est présenté dans la page `result.html`
-![result_page](./ressources/twiter_result.png)
+Once the query is done, our application sorts the tweets by prioritizing the most liked tweets (then the most retweeted, then the most commented) and returns two possible result pages :
+- If the search finds at least one tweet, the result is presented in `result.html`
+
 <p align="center"> 
 <img src="./ressources/twiter_result.png" /> 
 </p>
 
-- Si la recherche ne trouve pas de tweet, le résultat est présenté dans la page `result_with_no_text`
-![result_with_no_text_page](./ressources/result_with_no_text_page.png)
+- If the search doesn't find a tweet, the result is presented in `result_with_no_text`
 
-<u>Conseil d'utilisation pour l'API :</u><br>
-Il n'y a pas de limite (ni en nombre, ni en date) de requêtes par jour en ce qui concerne la recherche de tweets. Cependant, il faut créer un [compte](https://app.edenai.run/user/login?referral=sentiment-analysis-how-to) pour réaliser l'analyse de sentiments et renseigner la key obtenue. Le site propose alors un crédit de 10 dollars à consommer selon l'utilisation.
+<p align="center"> 
+<img src="./ressources/result_with_no_text_page.png" /> 
+</p>
+
 
 <H1 style="color:rgb(44, 44, 90)", align = "center">
 Your text analysis
 </H1>
 
-<p align = "center">
-![accueil](./ressources/your_text_home.png)
+<p align="center"> 
+<img src="./ressources/your_text_home.png" /> 
 </p>
 
-Pour cette application nous sollicitons notamment :
-- [Edenai](https://www.edenai.co/post/which-sentiment-analysis-api-to-choose-for-your-project) pour analyser la charge émotionnelle des tweets selectionnés
-- Le package [langid](https://pypi.org/project/langid/) pour détecter la langue du texte envoyé
-- Le package [stopwords](https://pypi.org/project/stop-words/) pour chercher les appax permettant de nettoyer le texte récolté. **Note: Nous avons amendé cette liste de nos propres mots** _N'hesitez pas à nous contacter si vous souhaitez ajouter d'autres mots_
-- Le package [word cloud](https://pypi.org/project/wordcloud/) pour afficher le nuage de mot afférent
+For this application we require :
+- [Edenai](https://www.edenai.co/post/which-sentiment-analysis-api-to-choose-for-your-project) to analyze the emotional charge of selected tweets
+- [Langid](https://pypi.org/project/langid/) to detect the language of the text sent
+- [Stopwords](https://pypi.org/project/stop-words/) to search for appax to clean the collected text. **Note: We have amended this list with our own words** _Don't hesitate to contact us if you wish to add other words_
+- [Word cloud](https://pypi.org/project/wordcloud/) to display the related word cloud
 
-Une fois la requête effectuée, notre application nettoie le texte, supprime les stowords et renvoie deux pages possibles de résultat :
-- Si le texte nettoyé contient au moins un caractère, le résultat est présenté dans la page `your_text_result.html`
-![result_page](./ressources/your_text_result.png)
-- Si le texte nettoyé contient zéro caractère, le résultat est présenté dans la page `result_with_no_text`
-![result_with_no_text_page](./ressources/your_text_error.png)
+Once the request is made, our application cleans the text, removes the stowords and returns two possible result pages :
+- If the cleaned text contains at least one character, the result is presented in `your_text_result.html`
+
+<p align="center"> 
+<img src="./ressources/your_text_result.png" /> 
+</p>
+
+- If the cleaned text contains zero characters, the result is presented in `result_with_no_text`
+
 <p align="center"> 
 <img src="./ressources/your_text_error.png" /> 
 </p>
+
+<H1 style="color:rgb(44, 44, 90)", align = "center">
+URL text analysis
+</H1>
+
+<p align="center"> 
+<img src="./ressources/url_home.png" /> 
+</p>
+
+For this application we require :
+- [Edenai](https://www.edenai.co/post/which-sentiment-analysis-api-to-choose-for-your-project) to analyze the emotional charge of selected tweets
+- [Langid](https://pypi.org/project/langid/) to detect the language of the text sent
+- [Stopwords](https://pypi.org/project/stop-words/) to search for appax to clean the collected text. **Note: We have amended this list with our own words** _Don't hesitate to contact us if you wish to add other words_
+- [Word cloud](https://pypi.org/project/wordcloud/) to display the related word cloud
+
+Once the URL link is sent, our application retrieves the text of the web page, cleans it, removes the stowords and returns two possible result pages :
+- If the cleaned text contains at least one character, the result is presented in `upload_file_result.html`
+
+<p align="center"> 
+<img src="./ressources/your_text_result.png" /> 
+</p>
+
+- If the cleaned text contains zero characters, the result is presented in `result_with_no_text`
+
+<p align="center"> 
+<img src="./ressources/result_with_no_text_page.png" /> 
+</p>
+
+<H3 style="color:rgb(255, 44, 44)">
+Warning :
+</H3> 
+The spider can not access some websites, including comments on the youtube site or sites requiring a login (eg email).

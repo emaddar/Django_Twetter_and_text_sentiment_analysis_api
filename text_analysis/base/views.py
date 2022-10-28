@@ -499,6 +499,23 @@ from django.shortcuts import render
 def your_text(request):
     return render(request, 'your_text.html', {'YourTextForm' : YourTextForm})
 
+#Fonction pour générer le nuage de mots
+def get_word_cloud_your_text_your_url(stop_words, text_only, status):
+    mask = np.array(Image.open("../ressources/mask_cloud.png"))
+    mask[mask == 1] = 255
+    wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
+    if status == "Positive" or status == "Neutral":
+        fig = plt.figure(figsize=(30,30) , dpi=200) 
+        plt.imshow(wordcloud.recolor(color_func = couleur_blue))
+        plt.axis("off")
+        fig.tight_layout(pad=0, w_pad=0, h_pad=0)
+        fig.savefig('./base/static/base/images/mypic.png') 
+    else : 
+        fig = plt.figure(figsize=(30,30) , dpi=200) 
+        plt.imshow(wordcloud.recolor(color_func = couleur_red))
+        plt.axis("off")
+        fig.tight_layout(pad=0, w_pad=0, h_pad=0)
+        fig.savefig('./base/static/base/images/mypic.png')  
 
 def your_text_result(request):
     form = YourTextForm(request.POST)
@@ -536,7 +553,7 @@ def your_text_result(request):
         is_without_stop_words = text_without_stop_words(text,stoplist)
         if re.search('[a-zA-Z]', is_without_stop_words) != None:       # check if is_without_stop_words containes any letter from a to Z or from A to Z
             stop_words = our_get_stop_words(lang) #Get stop words with this language
-            get_word_cloud(stop_words, text, max_labels)
+            get_word_cloud_your_text_your_url(stop_words, text, max_labels)
         else : 
             return render(request, 'result_with_no_text.html', {'query': text})
 
@@ -614,7 +631,7 @@ def upload_file_result(request):
     is_without_stop_words = text_without_stop_words(text,stoplist)
     if re.search('[a-zA-Z]', is_without_stop_words) != None:       # check if is_without_stop_words containes any letter from a to Z or from A to Z
         stop_words = our_get_stop_words(lang) #Get stop words with this language
-        get_word_cloud(stop_words, text, max_labels)
+        get_word_cloud_your_text_your_url(stop_words, text, max_labels)
     else : 
         return render(request, 'result_with_no_text.html', {'query': text})
 
