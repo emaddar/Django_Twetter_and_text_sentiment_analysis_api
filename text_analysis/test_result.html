@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Result</title>
+
+  <script src="https://kit.fontawesome.com/8f51521eb7.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<style>
+  .center {
+    text-align : center;
+    margin-top: 0%;
+    margin-left: 10%;
+    margin-right: 10%;
+    background-color: rgb(230, 239, 245);
+    padding: 10px; 
+  }
+  .CharBox{
+    text-align : center;
+    width: 400px;
+    height: 260px;
+  }
+  .special-card {
+    {% comment %} /* create a custom class so you 
+       do not run into specificity issues 
+       against bootstraps styles
+       which tends to work better than using !important 
+       (future you will thank you later)*/ {% endcomment %}
+    
+      {% comment %} background-color: rgba(245, 245, 245, 1); {% endcomment %}
+      {% comment %} opacity: .4; {% endcomment %}
+      text-align : left;
+      color : rgb(29, 161, 242);
+    }
+  </style> 
+</head>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Home page</title>
+
+  <script src="https://kit.fontawesome.com/8f51521eb7.js" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <style>
+    .center {
+      position: absolute;
+      text-align: center;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: rgb(230, 239, 245);
+    }
+  </style>
+</head>
+
+
+
+<body class="center" > -->
+
+
+    {% load static %}
+    
+    
+    <main>
+      
+    
+      <h1 style="color:rgb(44, 44, 90); font-weight: 700;">
+        <i class="fa-brands fa-twitter"></i> Twitter API sentiment analysis 
+      </h1>
+    
+      <p style="color:rgb(51, 51, 83); font-weight: 700; text-align: justify;">
+        This application searches for the latest Tweets in a defined period. Then an AI model analyzes and summarizes the tweets to give the general sentiment on the subject or the person in question.
+      </p>
+    
+      <form action="result">
+        {% csrf_token %}
+        <div class="row g-2">
+    
+          <!-- all_words -->
+            <div class="col-md">
+              <div class="form-floating">
+                <label for="floatingInputGrid">Words you want to search for</label>
+                <input type="text" class="form-control" id="floatingInputGrid" placeholder="Ex: PSG club*" name="all_words" required>
+              </div>
+            </div>
+    
+        </div>
+        <p></p>
+
+        <div class="row g-2">
+    
+            <!-- limit -->
+            <div class="col-md">
+                <div class="form-floating">
+                    <label for="floatingInputGrid">Maximum number of tweets</label>
+                    <input type="number" class="form-control" id="floatingInputGrid" value=3 name="limit" required min="3">
+                </div>
+              </div>
+
+            <!-- Minimum_likes -->
+            <div class="col-md">
+                <div class="form-floating">
+                    <label for="floatingInputGrid">Minimum likes</label>
+                    <input type="number" class="form-control" id="floatingInputGrid" value=1 name="Minimum_likes" required min="1">
+                </div>
+            </div>
+              
+          </div>
+          <p></p>
+            
+    
+    <!-- ************************************************************************** -->
+    <!-- ************************Onglet options************************************ -->
+    <!-- ************************************************************************** -->
+
+    <div style="margin-top:5px">
+        <div class="quotetitle">
+            <b>Additionals research options:</b> 
+            <input type="button" value="More" style="width:45px;font-size:15px;margin:0px;padding:0px;" onclick="if (this.parentNode.parentNode.getElementsByTagName('div')[1].getElementsByTagName('div')[0].style.display != '') 
+            { this.parentNode.parentNode.getElementsByTagName('div')[1].getElementsByTagName('div')[0].style.display = ''; this.innerText = ''; this.value = 'Less'; } 
+            else { this.parentNode.parentNode.getElementsByTagName('div')[1].getElementsByTagName('div')[0].style.display = 'none'; this.innerText = ''; this.value = 'More'; }" />
+        </div>
+        <div class="quotecontent">
+            <div style="display: none;">
+             <!-- ligne 1 -->
+             <div class="row g-2">
+    
+                <!-- exact_phrase -->
+                  <div class="col-md">
+                    <div class="form-group">
+                        <label for="floatingInputGrid">This exact phrase</label>
+                        <input type="text" class="form-control" id="floatingInputGrid" placeholder="Ex: Result of the PSG game tonight" name="exact_phrase">
+                    </div>
+                  </div>
+                         
+                  
+                    <!-- None_of_these_words -->
+                    <div class="col-md">
+                      <div class="form-group">
+                        <label for="floatingInputGrid">None of these words</label>
+                        <input class="form-control" placeholder="Ex: Neymar"  type="text" name="None_of_these_words">
+                      </div>
+                    </div>          
+              </div>
+              <p></p>
+
+              <!-- ligne 2 -->
+              <div class="row g-2">
+
+                <!-- These_hastags -->
+                  <div class="col-md">
+                    <div class="form-floating">
+                        <label for="floatingInputGrid">These hashtags</label>
+                        <input type="text" class="form-control" id="floatingInputGrid" placeholder="Ex: #leag1" name="These_hastags">
+                    </div>
+                  </div>
+          
+                
+                    <!-- From_acounts -->
+                    <div class="col-md">
+                      <div class="form-floating">
+                        <label for="floatingInputGrid">From accounts</label>
+                        <input type="text" class="form-control" id="floatingInputGrid" placeholder="Ex: @KMbappe" name="From_acounts">
+                      </div>
+                    </div>  
+                  
+                      <!-- To_acounts -->
+                    <div class="col-md">
+                      <div class="form-floating">
+                        <label for="floatingInputGrid">Accounts mentionned</label>
+                        <input type="text" class="form-control" id="floatingInputGrid" placeholder="Ex: @PSGClub" name="To_acounts">
+                      </div>
+                    </div>          
+              </div>
+          <p></p>
+
+            <!-- ligne 3 -->
+            <div class="row g-2">
+
+                <!-- from_date -->
+                  <div class="col-md">
+                    <div class="form-floating">
+                        <label for="floatingInputGrid">From</label>
+                        <input type="date" id="start" 
+                              min="2005-01-01" class="form-control" id="floatingInputGrid"  name="from_date">
+                    </div>
+                  </div>
+              
+                 <!-- to_date -->
+                  <div class="col-md">
+                    <div class="form-floating">
+                        <label for="floatingInputGrid">To</label>
+                        <input type="date" id="start" 
+                              min="2005-01-01" class="form-control" id="floatingInputGrid"  name="to_date">
+                    </div>
+                  </div>
+              
+              
+                  
+                      <!-- lang -->
+                    <div class="col-md">
+                      <div class="form-floating">
+                        <label for="floatingInputGrid">Language</label>
+                        <select class="form-select" id="floatingInputGrid" name = "lang">
+                          <option value="fr">fr</option>
+                          <option>Any language</option>
+                          <option>en</option>
+                          <option>ar</option>
+                          <option>bn</option>
+                          <option>cs</option>
+                          <option>da</option>
+                          <option>de</option>
+                          <option>el</option>
+                          <option>es</option>
+                          <option>fa</option>
+                          <option>fil</option>
+                          <option>he</option>
+                          <option>hi</option>
+                          <option>hu</option>
+                          <option>id</option>
+                          <option>it</option>
+                          <option>ja</option>
+                          <option>ko</option>
+                          <option>msa</option>
+                          <option>no</option>
+                          <option>pl</option>
+                          <option>pt</option>
+                          <option>ro</option>
+                          <option>ru</option>
+                          <option>sv</option>
+                          <option>th</option>
+                          <option>tr</option>
+                          <option>uk</option>
+                          <option>ur</option>
+                          <option>zh-cn</option>
+                          <option>zh-tw</option>
+                        </select>
+                      </div>
+                    </div>          
+              </div>
+              <p></p>
+            </div>
+        </div>
+    </div>
+    <p></p>
+    
+        <input class="btn btn-primary btn-lg btn-block" type="submit" value='Predict'>
+    
+      </form>
+    
+    
+      <a href="{% url 'home' %}"> <i class="fa-solid fa-angles-left"></i> Back to Home </a>
+    
+    
+    </main>
+</body>
+
+</html>
