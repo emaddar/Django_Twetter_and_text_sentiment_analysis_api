@@ -1,65 +1,72 @@
+#########################################################################
+#                          Import packages                              #
+#########################################################################
 
 from cProfile import label
 from email.mime import image
 from http.client import HTTPResponse
 import imp
 from django.shortcuts import render
-import snscrape.modules.twitter as sntwitter
+import snscrape.modules.twitter as sntwitter                            # For scrapping twitter
 import pandas as pd
 import re
-from stop_words import get_stop_words
-from wordcloud import WordCloud
-
+from stop_words import get_stop_words                                   # For cleaning text
+from wordcloud import WordCloud                                         # For get a Wordcloud
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 from PIL import Image
-import json
-import requests
+import json                                                             # For get the sentiment analysis API
+import requests                                                         # For get the sentiment analysis API
 import random
 from datetime import datetime, timedelta
-
-from django.http import HttpResponseRedirect   # For signUp page
-from .forms import SignUp, UploadFileForm                       # For signUp page
-
-
-from django.contrib.auth.forms import UserCreationForm  # For signUp page Methode 2
-from django.urls import reverse_lazy                    # For signUp page Methode 2
-from django.views import generic                        # For signUp page Methode 2
-
-import langid  #for language detect
-import datetime 
-
+from django.http import HttpResponseRedirect                            # For signUp page
+from .forms import SignUp, UploadFileForm                               # For signUp page
+from django.contrib.auth.forms import UserCreationForm                  # For signUp page methode 2
+from django.urls import reverse_lazy                                    # For signUp page methode 2
+from django.views import generic                                        # For signUp page methode 2
+from django.views.generic import CreateView                             # For SignUp form Page  
+from . import forms                                                     # For SignUp form Page 
 from django.contrib.auth.decorators import login_required
+import langid                                                           # For language detect
+from .forms import YourTextForm                                         # For Your text analysis
+from django.views.generic import TemplateView                           # For Your text analysis
+from dataclasses import replace                                         # For URL text analysis
+from bs4 import BeautifulSoup                                           # For URL text analysis
 
+#################################################################################################################################
+#################################################################################################################################
+#################################################################################################################################
+###                                                                                                                           ###
+###                                                         About                                                             ###
+###                                                                                                                           ###
+#################################################################################################################################
+#################################################################################################################################
+#################################################################################################################################
 
-
-
-
-###__________________about page__________________###
 def about(request):
     return render(request, 'about.html')
-###__________________Scrape des tweets__________________###
-@login_required
+
+#################################################################################################################################
+#################################################################################################################################
+#################################################################################################################################
+###                                                                                                                           ###
+###                                                   Twitter analysis                                                        ###
+###                                                                                                                           ###
+#################################################################################################################################
+#################################################################################################################################
+#################################################################################################################################
+
+@login_required                                     # Makes loggin mandatory
 def tweet(request):
     return render(request, 'index.html')
 
+###____________________________Scrapping____________________________###
 
-
-#########################################################################
-#                          language detector                            #
-#########################################################################
-def language_detector(text):
-    return langid.classify(text)[0]
-
-
-
-######__________________Scrapping__________________###
 def join_with(mylist, operator):
     return f' {operator} '.join(mylist)
-
 
 def get_tweets(query, limit):
     tweets = []
@@ -68,25 +75,23 @@ def get_tweets(query, limit):
             break
         else:
             tweets.append([tweet.date, tweet.username, tweet.content, tweet.likeCount, tweet.replyCount, tweet.retweetCount, tweet.url])
-
     df = pd.DataFrame(tweets, columns=['Date', 'User', 'Tweet', 'Like', 'Replay', 'Retweet', 'Url'])
     return df
 
+###__________________________Text cleaning__________________________###
 
-###__________________Nettoyage du texte__________________###
-#Supression brouillard du texte
+# Removal the text fog
 def clean_text(x):
-    x = re.sub(r'http\S+', '', x)     # Remove URL
-    x = re.sub(r'@\S+', '', x)        # Remove mentions
-    x = re.sub(r'#\S+', '', x)        # Remove Hashtags
+    x = re.sub(r'http\S+', '', x)                   # Remove URL
+    x = re.sub(r'@\S+', '', x)                      # Remove mentions
+    x = re.sub(r'#\S+', '', x)                      # Remove Hashtags
     x = re.sub('\n+', '', x)
-    x = re.sub("\'\w+", '', x)                 # Remove ticks and the next character
-    x = re.sub(r'\w*\d+\w*', '', x)     # Remove numbers
-    x = re.sub('\s{2,}', " ", x)        # Replace the over spaces
-    x = x.replace('()', '')             #remove ()
+    x = re.sub("\'\w+", '', x)                      # Remove ticks and the next character
+    x = re.sub(r'\w*\d+\w*', '', x)                 # Remove numbers
+    x = re.sub('\s{2,}', " ", x)                    # Replace the over spaces
+    x = x.replace('()', '')                         # Remove ()
     x = x.replace('>>>','')
     x = x.replace('#', '')
-
     return x
 
 def text_without_stop_words(text,stopwords):
@@ -95,49 +100,8 @@ def text_without_stop_words(text,stopwords):
             text = text.replace(i, '')
     return text
 
-
-
-#Création d'un texte unique pour l'analyse
-def getQuery(searsh_query):
-    query = searsh_query[0] + " lang:" + searsh_query[10] + " " 
-    if searsh_query[2] != "":
-        query += '"' + searsh_query[2] + '"' + " "
-    if searsh_query[3] != "":
-        query +=  ' '.join(['-'+i for i in searsh_query[3].split()]) + " "
-    # if searsh_query[3] != "":
-    #     query += '(' + join_with(searsh_query[3].split(), 'OR') + ')'  + " "
-    if searsh_query[4] != "":
-        query += '(' + join_with(searsh_query[4].split(), 'OR') + ')'  + " "
-    if searsh_query[5] != "":
-        query += '(from:' + join_with(searsh_query[5].split(), 'OR from:') + ')'  + " "
-    if searsh_query[6] != "":
-        query += '(to:' + join_with(searsh_query[6].split(), 'OR to:') + ')'  + " "
-    # if searsh_query[7] != "" :
-    #     query += 'min_replies:' + searsh_query[7] + " "
-    if searsh_query[7] != "" :
-        query += 'min_faves:' + searsh_query[7] + " "
-    # if searsh_query[8] != "" :
-    #     query += 'min_retweets:' + searsh_query[8] + " "
-    if searsh_query[8] != "" :
-        query += 'since:' + searsh_query[8] + " "
-    if searsh_query[9] != "" :
-        query += 'until:' + searsh_query[9] + " "
-
-    return query
-
-###__________________World cloud__________________###
-
-#Couleur des mots du nuage
-def couleur_red(*args, **kwargs):
-    return "rgb(255, 0, {})".format(random.randint(0, 170))
-
-def couleur_blue(*args, **kwargs):
-    return "rgb({}, 0, 255)".format(random.randint(0, 170))
-
-
-
 def our_get_stop_words(lang):
-    stop_words = get_stop_words(lang) #Nettoyage des appax, possible d'en ajouter à la
+    stop_words = get_stop_words(lang)               # Possible to add words
     if lang == "fr":
         ma_list_fr = ["bcp", "Bcp", "trkl", "c'est", "est","s'en","j'ai","etc", "ça", "n'a","n'as","ca","va", "après", "qu'","c","C","lors","s","S","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","qu'il","qu'elle","vs","bcp","mdr", "d'un", "d'une", "s'il", "s'ils", "ya", "n'est"]
         for mot in ma_list_fr:
@@ -150,7 +114,37 @@ def our_get_stop_words(lang):
                  stop_words.append(mot)
     return stop_words
 
-#Fonction pour générer le nuage de mots
+# Create a single text for analysis
+def getQuery(searsh_query):
+    query = searsh_query[0] + " lang:" + searsh_query[10] + " " 
+    if searsh_query[2] != "":
+        query += '"' + searsh_query[2] + '"' + " "
+    if searsh_query[3] != "":
+        query +=  ' '.join(['-'+i for i in searsh_query[3].split()]) + " "
+    if searsh_query[4] != "":
+        query += '(' + join_with(searsh_query[4].split(), 'OR') + ')'  + " "
+    if searsh_query[5] != "":
+        query += '(from:' + join_with(searsh_query[5].split(), 'OR from:') + ')'  + " "
+    if searsh_query[6] != "":
+        query += '(to:' + join_with(searsh_query[6].split(), 'OR to:') + ')'  + " "
+    if searsh_query[7] != "" :
+        query += 'min_faves:' + searsh_query[7] + " "
+    if searsh_query[8] != "" :
+        query += 'since:' + searsh_query[8] + " "
+    if searsh_query[9] != "" :
+        query += 'until:' + searsh_query[9] + " "
+    return query
+
+###___________________________World cloud___________________________###
+
+# Word cloud's color
+def couleur_red(*args, **kwargs):
+    return "rgb(255, 0, {})".format(random.randint(0, 170))
+
+def couleur_blue(*args, **kwargs):
+    return "rgb({}, 0, 255)".format(random.randint(0, 170))
+
+# Create Word cloud
 def get_word_cloud(stop_words, text_only, status):
     mask = np.array(Image.open("../ressources/mask_bird.jpg"))
     mask[mask == 1] = 255
@@ -168,30 +162,7 @@ def get_word_cloud(stop_words, text_only, status):
         fig.tight_layout(pad=0, w_pad=0, h_pad=0)
         fig.savefig('./base/static/base/images/mypic.png')  
 
-#########################################################################
-#                          get from date to date ... k days ago         #
-#########################################################################
-
-def get_from_to_date_k_days_ago(df,k):
-    df_date_sorted = df.sort_values(by='Date')
-    df_date_sorted_time_type = df_date_sorted 
-    
-    from_date = df_date_sorted_time_type.iloc[0]['Date']
-    to_date = df_date_sorted_time_type.iloc[-1]['Date']
-
-    from_date_1_year_ago = (pd.to_datetime(from_date.strftime('%Y-%m-%d')) - timedelta(days=k)).strftime('%Y-%m-%d')
-    to_date_1_year_ago = (pd.to_datetime(to_date.strftime('%Y-%m-%d')) - timedelta(days=k-1)).strftime('%Y-%m-%d')
-
-
-    return (from_date_1_year_ago, to_date_1_year_ago)
-      
-
-#########################################################################
-#                                                                       #
-#                          get API function                             #
-#                                                                       #
-#########################################################################
-
+###_____________________________Get API_____________________________###
 
 def get_api(text_only_limited, lang):
     headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjI3ODQwYjUtY2IxOC00MGFmLWE5NmEtYWMzNzNjMzAxMDBmIiwidHlwZSI6ImFwaV90b2tlbiJ9.sJnkDP04P0fnK0Bd_ayFkEpFMM0gM9GdM8MR9LwsLG0"}
@@ -226,44 +197,47 @@ def get_api(text_only_limited, lang):
     if API_status == 1:
         x = result['amazon']['items']
 
-    #Création dataframe du résultat de l'API
+    # Create a dataframe of the API result
         api_dico = {}
         for i in range(len(x)):
             api_dico[x[i]['sentiment']] = round(x[i]['sentiment_rate'],4)*100
-
         api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
 
-    ###__________________Mise en forme du graphique de l'analyse sentimentale__________________###
+    # Formatting of the sentimental analysis graph
         labels = api_df['sentiment'].tolist()
         data = api_df['sentiment_rate'].tolist()
 
-
-        #Supression sentiment Mixed
+    # Remove "Mixed" sentiment
         labels.remove('Mixed')
         del data[-1]
-
         return(data, labels, n, API_status)
     else:
         return API_status
 
+###______________Get from date to date ... k days ago_______________###
 
+def get_from_to_date_k_days_ago(df,k):
+    df_date_sorted = df.sort_values(by='Date')
+    df_date_sorted_time_type = df_date_sorted 
+    
+    from_date = df_date_sorted_time_type.iloc[0]['Date']
+    to_date = df_date_sorted_time_type.iloc[-1]['Date']
 
+    from_date_1_year_ago = (pd.to_datetime(from_date.strftime('%Y-%m-%d')) - timedelta(days=k)).strftime('%Y-%m-%d')
+    to_date_1_year_ago = (pd.to_datetime(to_date.strftime('%Y-%m-%d')) - timedelta(days=k-1)).strftime('%Y-%m-%d')
+    return (from_date_1_year_ago, to_date_1_year_ago)
 
-
-###__________________Envoyer les résultats vers le template du site__________________###
+###_____________Sending result to the website template______________###
 
 def result(request):
     all_words = request.GET['all_words']                       #0
     limit = request.GET['limit']                               #1
     exact_phrase = request.GET['exact_phrase']                 #2
-    # Any_of_these_words = request.GET['Any_of_these_words']   #
     None_of_these_words = request.GET['None_of_these_words']   #3
     These_hastags = request.GET['These_hastags']               #4
     From_acounts = request.GET['From_acounts']                 #5
     To_acounts = request.GET['To_acounts']                     #6
-    # Minimun_replies = request.GET['Minimun_replies']         #
     Minimum_likes = request.GET['Minimum_likes']               #7
-    # Minimum_retweets = request.GET['Minimum_retweets']       #
     from_date = request.GET['from_date']                       #8
     to_date = request.GET['to_date']                           #9
     lang = request.GET['lang']                                 #10
@@ -275,58 +249,48 @@ def result(request):
     df = get_tweets(query, int(limit))
     df = df.sort_values(['Like', 'Retweet','Replay'],ascending=False)
 
-
-
     x = " ".join(list(df['Tweet']))
     text_only = clean_text(x)
     
     All_text = text_only
 
-
-
-
-##__________________API______________________________###
+#### API ####
     # x = get_api(text_only, lang)
     
-    # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
+    # if len(x) == 4 :                              # When get_api return False then len(get_API) = 1 else len(get_API) = 4
     #     data = x[0]
     #     labels = x[1]
     #     n = x[2]
-
     #     max_data = max(data)
     #     max_data_index = data.index(max(data))
     #     max_labels = labels[max_data_index]
     # else :
     #     data = [0, 0, 0]   # This means wa can not do setiment analysis
     #     labels = ["Positive", "Negative", "Neutral"]
-##__________________API______________________________###
+#### API ####
 
-    data = [60, 30, 10]                                           # API 365 Fixed Value...........................
-    labels = ["Positive", "Negative", "Neutral"]                  # API 365 Fixed Value...........................
-    max_data = max(data)                                          # API 365 Fixed Value...........................
-    max_data_index = data.index(max(data))                        # API 365 Fixed Value...........................
-    max_labels = labels[max_data_index]                           # API 365 Fixed Value...........................
+    data = [60, 30, 10]                             # API 365 Fixed Value (to save API credits)
+    labels = ["Positive", "Negative", "Neutral"]    # API 365 Fixed Value (to save API credits)
+    max_data = max(data)                            # API 365 Fixed Value (to save API credits)
+    max_data_index = data.index(max(data))          # API 365 Fixed Value (to save API credits)
+    max_labels = labels[max_data_index]             # API 365 Fixed Value (to save API credits)
     n = 4000
-
 
     if radio_yes == "Yes" :
 
         df_date_sorted = df.sort_values(['Date'],ascending=True)
         from_date = df_date_sorted.iloc[0]['Date'].strftime("%Y-%m-%d") # get date of 1st tweet in result
         to_date = df_date_sorted.iloc[-1]['Date'].strftime("%Y-%m-%d")  # get date of last tweet in result
-
         phrase = f"from {from_date} to {to_date}"
 
-
-    #################################################  365 days ago
+### 365 days ago ###
         from_to_365_days_ago = get_from_to_date_k_days_ago(df,365)
         from_date_1_year_ago = str(from_to_365_days_ago[0])
         to_date_1_year_ago = str(from_to_365_days_ago[1])
-        query = re.sub(r'until:\S+', '', query)     # Remove URL
-        query = re.sub(r'since:\S+', '', query)        # Remove mentions
+        query = re.sub(r'until:\S+', '', query)   # Remove URL
+        query = re.sub(r'since:\S+', '', query)   # Remove mentions
         query += ' until:'+to_date_1_year_ago
         query += ' since:'+from_date_1_year_ago
-
 
         df_365_days_ago = get_tweets(query, int(limit))
         df_365_days_ago = df_365_days_ago.sort_values(['Like', 'Retweet','Replay'],ascending=False)
@@ -334,8 +298,7 @@ def result(request):
         x_365_days_ago = " ".join(list(df_365_days_ago['Tweet']))
         text_only_365_days_ago = clean_text(x_365_days_ago)
 
-
-    ##__________________ API 365_days_ago ______________________________###
+#### API 365_days_ago ####
         # api_365_days_ago = get_api(text_only_365_days_ago, lang)
         
         # if len(api_365_days_ago) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
@@ -345,17 +308,13 @@ def result(request):
         # else :
         #     data_365_days_ago = [0, 0, 0]   # This means wa can not do setiment analysis
         #     labels_365_days_ago = ["Positive", "Negative", "Neutral"]
-    ##__________________ API 365_days_ago ______________________________###
+#### API 365_days_ago ####
 
-        data_365_days_ago = [86.99999999999999, 0.208, 0.9705]            # API 365 Fixed Value...........................
-        labels_365_days_ago = ["Positive", "Negative", "Neutral"]         # API 365 Fixed Value...........................
-        n_365_days_ago = 4000                                             # API 365 Fixed Value...........................
-
-
-
+        data_365_days_ago = [86.99999999999999, 0.208, 0.9705]            # API 365 Fixed Value (to save API credits)
+        labels_365_days_ago = ["Positive", "Negative", "Neutral"]         # API 365 Fixed Value (to save API credits)
+        n_365_days_ago = 4000                                             # API 365 Fixed Value (to save API credits)
 
         phrase_365 = f"from {from_date_1_year_ago} to {to_date_1_year_ago}"
-
 
         result_df_api = pd.DataFrame({
         "Period" : [phrase, phrase_365]  ,
@@ -375,19 +334,14 @@ def result(request):
         plt.savefig('./base/static/base/images/copmared_365_days.png',bbox_inches='tight')  
     else :
         phrase = ""
-        phrase_365 = ""
+        phrase_365 = "" 
 
-
-
-
-#Envoi du résultat sur le site
+### Envoi du résultat sur le site ###
     if text_only != "":
         stop_words = our_get_stop_words(lang)
         get_word_cloud(stop_words, All_text, max_labels)
 
-            #####################################################################
-            #                       Get  3 Tweets most liked                    #
-            #####################################################################
+### Get  3 Tweets most liked ###
         if len(df)>=3:
             tweet_1_date = df.iloc[0]['Date']
             tweet_2_date = df.iloc[1]['Date']
@@ -419,7 +373,6 @@ def result(request):
             tweet_3_Url = df.iloc[2]['Url']    
         else : 
             return render(request, 'result_with_no_text.html', {'query': query})
-
    
         return render(request, 'result.html', {
                                          'n':n,
@@ -462,44 +415,32 @@ def result(request):
         return render(request, 'result_with_no_text.html', {'query': query}
                                         )
 
-
 def home(request):
     return render(request, 'home.html')
 
-
-
-
-
-
-
-
-
-
-
 #################################################################################################################################
 #################################################################################################################################
 #################################################################################################################################
 ###                                                                                                                           ###
-###                                                     Your Own Text Analysis                                                ###
+###                                         Your text analysis // URL text analysis                                           ###
 ###                                                                                                                           ###
 #################################################################################################################################
 #################################################################################################################################
 #################################################################################################################################
 
-
-
-
-
-from .forms import YourTextForm                       # For Your Text Analysis
-from django.views.generic import TemplateView
-from django.shortcuts import render
-
-
-@login_required
+@login_required                                     # Makes loggin mandatory for Your text analysis
 def your_text(request):
     return render(request, 'your_text.html', {'YourTextForm' : YourTextForm})
 
-#Fonction pour générer le nuage de mots
+@login_required                                     # Makes loggin mandatory for URL text analysis
+def upload_file(request):
+    return render(request, 'upload_file.html')
+
+# Language detection
+def language_detector(text):
+    return langid.classify(text)[0]
+
+# Create Word cloud
 def get_word_cloud_your_text_your_url(stop_words, text_only, status):
     mask = np.array(Image.open("../ressources/mask_cloud.png"))
     mask[mask == 1] = 255
@@ -517,37 +458,38 @@ def get_word_cloud_your_text_your_url(stop_words, text_only, status):
         fig.tight_layout(pad=0, w_pad=0, h_pad=0)
         fig.savefig('./base/static/base/images/mypic.png')  
 
+###_______________________Your text analysis________________________###
+
 def your_text_result(request):
     form = YourTextForm(request.POST)
     if form.is_valid():
         # your_text_field = request.GET['your_text_field']
-        text = form.cleaned_data['your_text_field']  # We use this method (instead of GET above) when we use Django's Forms
-        text = clean_text(text)  #cleaning the text
-        lang = language_detector(text) # detect the language
+        text = form.cleaned_data['your_text_field']              # We use this method (instead of GET above) when we use Django's Forms
+        text = clean_text(text)                                  # Cleaning the text
+        lang = language_detector(text)                           # Detect the language
 
-
+#### API ####
         # x = get_api(text, lang)  # get sentiment analysis
         # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
         #     data = x[0]
         #     labels = x[1]
         #     n = x[2]
-
         #     max_data = max(data)
         #     max_data_index = data.index(max(data))
         #     max_labels = labels[max_data_index]
         # else :
         #     data = [0, 0, 0]   # This means wa can not do setiment analysis
         #     labels = ["Positive", "Negative", "Neutral"]
+#### API ####
 
-
-
+### API fixed values (to save API credits) ###
         data = [60, 30, 10]
         labels = ["Positive", "Negative", "Neutral"]
         max_data = max(data)
         max_data_index = data.index(max(data))
         max_labels = labels[max_data_index]
         n = 4000
-
+### API fixed values (to save API credits) ###
 
         stoplist = our_get_stop_words(lang)
         is_without_stop_words = text_without_stop_words(text,stoplist)
@@ -557,7 +499,6 @@ def your_text_result(request):
         else : 
             return render(request, 'result_with_no_text.html', {'query': text})
 
-
         return render(request, 'your_text_result.html', { 
                                                             'n':n,
                                                             "data":data,
@@ -566,27 +507,7 @@ def your_text_result(request):
                                                             'max_labels':max_labels
                                                             })
 
-
-
-#################################################################################################################################
-#################################################################################################################################
-#################################################################################################################################
-###                                                                                                                           ###
-###                                                     Scrape any URL and analyse the text                                   ###
-###                                                                                                                           ###
-#################################################################################################################################
-#################################################################################################################################
-#################################################################################################################################
-
-from dataclasses import replace
-import requests
-from bs4 import BeautifulSoup
-import re
-
-@login_required
-def upload_file(request):
-    return render(request, 'upload_file.html')
-
+###_______________________URL text analysis_________________________###
 
 def upload_file_result(request):
     text = request.GET['file']
@@ -600,10 +521,7 @@ def upload_file_result(request):
 
     lang = language_detector(text) # detect the language
 
-
-
-
-
+#### API ####
     # x = get_api(text, lang)  # get sentiment analysis
     # if len(x) == 4 :   # Whet get_api return False then len(get_API) = 1 else len(get_API) = 4
     #     data = x[0]
@@ -616,16 +534,16 @@ def upload_file_result(request):
     # else :
     #     data = [0, 0, 0]   # This means wa can not do setiment analysis
     #     labels = ["Positive", "Negative", "Neutral"]
+#### API ####
 
-
-
+### API fixed values (to save API credits) ###
     data = [60, 30, 10]
     labels = ["Positive", "Negative", "Neutral"]
     max_data = max(data)
     max_data_index = data.index(max(data))
     max_labels = labels[max_data_index]
     n = 4000
-
+### API fixed values (to save API credits) ###
 
     stoplist = our_get_stop_words(lang)
     is_without_stop_words = text_without_stop_words(text,stoplist)
@@ -635,7 +553,6 @@ def upload_file_result(request):
     else : 
         return render(request, 'result_with_no_text.html', {'query': text})
 
-
     return render(request, 'upload_file_result.html', { 
                                                             'n':n,
                                                             "data":data,
@@ -643,11 +560,6 @@ def upload_file_result(request):
                                                             'max_data':round(max_data,2),
                                                             'max_labels':max_labels
                                                             })
-
-
-
-
-
 
 #################################################################################################################################
 #################################################################################################################################
@@ -658,14 +570,6 @@ def upload_file_result(request):
 #################################################################################################################################
 #################################################################################################################################
 #################################################################################################################################
-
-
-###__________________Sign Up__________________###
-
-from django.views.generic import CreateView
-from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
-from . import forms
 
 class SignupPage(CreateView):
     form_class = forms.UserCreateForm
