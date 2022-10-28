@@ -8,7 +8,9 @@ Ce site internet permet de réaliser une analyse de sentiment de texte en utilis
 Twitter analysis
 </H1>
 
-![accueil](./ressources/twiter_analysis_home.png)
+<p align="center"> 
+<img src="./ressources/twiter_analysis_home.png" /> 
+</p>
 
 Pour cette application nous sollicitons notamment :
 - [Edenai](https://www.edenai.co/post/which-sentiment-analysis-api-to-choose-for-your-project) pour analyser la charge émotionnelle des tweets selectionnés
@@ -19,6 +21,10 @@ Pour cette application nous sollicitons notamment :
 Une fois la requête effectuée, notre application trie les tweets en priorisant les tweets les plus likés (puis les plus retweetés, puis les plus commentés) et renvoie deux pages possibles de résultat :
 - Si la recherche trouve au moins un tweet, le résultat est présenté dans la page `result.html`
 ![result_page](./ressources/twiter_result.png)
+<p align="center"> 
+<img src="./ressources/twiter_result.png" /> 
+</p>
+
 - Si la recherche ne trouve pas de tweet, le résultat est présenté dans la page `result_with_no_text`
 ![result_with_no_text_page](./ressources/result_with_no_text_page.png)
 
@@ -29,7 +35,9 @@ Il n'y a pas de limite (ni en nombre, ni en date) de requêtes par jour en ce qu
 Your text analysis
 </H1>
 
+<p align = "center">
 ![accueil](./ressources/your_text_home.png)
+</p>
 
 Pour cette application nous sollicitons notamment :
 - [Edenai](https://www.edenai.co/post/which-sentiment-analysis-api-to-choose-for-your-project) pour analyser la charge émotionnelle des tweets selectionnés
