@@ -19,8 +19,8 @@
           <span class="navbar-text"> Logged as : {{user.get_username}}</span>
           <a class="btn btn-sm btn-outline-secondary" href="{% url 'logout' %}?next={{request.path}}">log out</a>
           {% else %}
-          <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
-        <a href="{% url 'signup' %}" class="btn btn-primary">Sign-up</a>
+            <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Login</a>
+            <a href="{% url 'signup' %}" class="btn btn-primary">Sign-up</a>
           {% endif %}
 
         
