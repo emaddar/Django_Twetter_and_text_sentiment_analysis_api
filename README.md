@@ -50,3 +50,6 @@ Une fois la requête effectuée, notre application nettoie le texte, supprime le
 ![result_page](./ressources/your_text_result.png)
 - Si le texte nettoyé contient zéro caractère, le résultat est présenté dans la page `result_with_no_text`
 ![result_with_no_text_page](./ressources/your_text_error.png)
+<p align="center"> 
+<img src="./ressources/your_text_error.png" /> 
+</p>
