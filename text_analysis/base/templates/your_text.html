@@ -8,7 +8,18 @@
 {% comment %} <h1>Your text</h1> {% endcomment %}
 
 
-<form action="your_text_result" method="post">
+<form action="your_text_result" method="post" style= "
+width: 1100px;
+height: 500px;
+
+position: absolute;
+top:0;
+bottom: 0;
+left: 0;
+right: 0;
+
+margin: auto;
+">
   {% csrf_token %}
   <h1 style="color:rgb(44, 44, 90); font-weight: 700;">
     <i class="fa-solid fa-book"></i> Your text analysis 
