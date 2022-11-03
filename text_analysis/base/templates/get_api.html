@@ -4,10 +4,34 @@
 
 {% block content %}
 
+<h1 style="color:rgb(44, 44, 90); font-weight: 700;">
+    <i class="fa-solid fa-circle-question"></i> HOW GET YOUR FREE API KEY {{max_labels|safe}}
+  </h1>
 
-<h1>get_api</h1>
+  <br>
+  <p align="left">  1. First you have to connect to <a href="https://www.edenai.co/post/which-sentiment-analysis-api-to-choose-for-your-project"> Edenai</a>
+</p>
 
+<br>
+<p align="left">  2. Then click on "Sign in" and complete the various fields requested to create an account
+</p>
+<img src="{% static 'base/images/edenai_signup.png' %}" width="1200" height="500" />
 
+<br>
+<br>
+<p align="left">  3. When you have created your account you can login by clicking on "Get Started", the site will take you to the home page. On the homepage, you will 
+    find a tab called "Get your API Key". Click on it and the site will reveal your API key named "Your API Token".
+</p>
+<img src="{% static 'base/images/edenai_homepage.png' %}" width="1200" height="500" />
+<img src="{% static 'base/images/edenai_key.png' %}" width="1200" height="500" />
 
+<br>
+<br>
+<p align="left">  4. All you have to do is copy this key and paste it on the registration form of our site to take advantage of all its features.
+</p>
+
+<img src="{% static 'base/images/singup_enter_your_key.png' %}" width="1200" height="600" />
+
+<p></p>
 
 {% endblock content %}
