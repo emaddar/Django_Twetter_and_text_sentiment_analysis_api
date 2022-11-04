@@ -478,7 +478,7 @@ def get_word_cloud_your_text_your_url(stop_words, text_only, status):
 
 def your_text_result(request):
     form = YourTextForm(request.POST)
-    if form.is_valid():
+    if form.is_valid() and form != "":
         # your_text_field = request.GET['your_text_field']
         text = form.cleaned_data['your_text_field']              # We use this method (instead of GET above) when we use Django's Forms
         text = clean_text(text)                                  # Cleaning the text
