@@ -177,4 +177,4 @@ LOGIN_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = "base.User"
 
-CSRF_TRUSTED_ORIGINS = ['https://text-analysis-ia.herokuapp.com/']
+CSRF_TRUSTED_ORIGINS = ['https://text-analysis-ia.herokuapp.com']
