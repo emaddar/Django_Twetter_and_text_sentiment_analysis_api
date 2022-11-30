@@ -147,7 +147,7 @@ def couleur_blue(*args, **kwargs):
 
 # Create Word cloud
 def get_word_cloud(stop_words, text_only, status):
-    mask = np.array(Image.open("../ressources/mask_bird.jpg"))
+    mask = np.array(Image.open("./ressources/mask_bird.jpg"))
     mask[mask == 1] = 255
     wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
     if status == "Positive" or status == "Neutral":
@@ -475,7 +475,7 @@ def language_detector(text):
 
 # Create Word cloud
 def get_word_cloud_your_text_your_url(stop_words, text_only, status):
-    mask = np.array(Image.open("../ressources/mask_cloud.png"))
+    mask = np.array(Image.open("./ressources/mask_cloud.png"))
     mask[mask == 1] = 255
     wordcloud = WordCloud(background_color = 'white', stopwords = stop_words, max_words = 75, mask=mask).generate(text_only)
     if status == "Positive" or status == "Neutral":
