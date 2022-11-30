@@ -177,11 +177,11 @@ def get_api(text_only_limited, lang, key):
         n = len(text_only_limited)
 
     API_status = 1
-    payload={"providers": "amazon", 'language': lang, 'text': text_only_limited}
+    payload={"providers": "google", 'language': lang, 'text': text_only_limited}
     response = requests.post(url, json=payload, headers=headers)
     result = json.loads(response.text)
 
-    if result['amazon']['status'] == 'fail':
+    if result['google']['status'] == 'fail':
         for i in range(20):
             n -= 1000
             if  n<=0 :
@@ -189,29 +189,46 @@ def get_api(text_only_limited, lang, key):
                 break
             else:
                 text_only_limited = text_only_limited[:n]
-                payload={"providers": "amazon", 'language': lang, 'text': text_only_limited}
+                payload={"providers": "google", 'language': lang, 'text': text_only_limited}
                 response = requests.post(url, json=payload, headers=headers)
                 result = json.loads(response.text)
-                if result['amazon']['status'] != 'fail':
+                if result['google']['status'] != 'fail':
                     API_status = 1
                     break
 
     if API_status == 1:
-        x = result['amazon']['items']
 
-    # Create a dataframe of the API result
-        api_dico = {}
-        for i in range(len(x)):
-            api_dico[x[i]['sentiment']] = round(x[i]['sentiment_rate'],4)*100
-        api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
+    #     x = result['amazon']['items']
 
-    # Formatting of the sentimental analysis graph
-        labels = api_df['sentiment'].tolist()
-        data = api_df['sentiment_rate'].tolist()
+    # # Create a dataframe of the API result
+    #     api_dico = {}
+    #     for i in range(len(x)):
+    #         api_dico[x[i]['sentiment']] = round(x[i]['sentiment_rate'],4)*100
+    #     api_df = pd.DataFrame(list(api_dico.items()), columns=['sentiment', 'sentiment_rate'])
 
-    # Remove "Mixed" sentiment
-        labels.remove('Mixed')
-        del data[-1]
+    # # Formatting of the sentimental analysis graph
+    #     labels = api_df['sentiment'].tolist()
+    #     data = api_df['sentiment_rate'].tolist()
+
+    # # Remove "Mixed" sentiment
+    #     labels.remove('Mixed')
+    #     del data[-1]
+        result_list = result['google']['items']
+        labels = []
+        data = []
+        for i in range(len(result_list)):
+            labels.append(result_list[i]['sentiment'])
+            data.append(round(result_list[i]['sentiment_rate']*100,3))
+
+        d = {'labels':labels,'data':data}
+        d = pd.DataFrame(d)
+        d = d.groupby('labels').mean()
+        d = d.reset_index()
+        d = dict(zip(d.labels, d.data))
+
+
+        labels = ["Positive", "Negative", "Neutral"]
+        data = [d[labels[0]], d[labels[1]], d[labels[2]]]
         return(data, labels, n, API_status)
     else:
         return API_status
