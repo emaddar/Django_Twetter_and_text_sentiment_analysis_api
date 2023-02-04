@@ -15,3 +15,6 @@ psycopg2>=2.0,<3.0
 django-widget-tweaks
 django-crispy-forms
 requests
+wordcloud
+snscrape
+python-dotenv
